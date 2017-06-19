@@ -248,7 +248,7 @@ go_training(id){
 
 find_tree(id)
 {
-	mousemove, 0, 0
+	;mousemove, 0, 0
 	msg = [+] %id% FIND TREE START
 	log(msg)
 	WinActivate, %id%
@@ -333,7 +333,7 @@ find_tree(id)
 
 
 find_training(id){ ; up, down, left, right of character semicolon check
-	mousemove, 0, 0 ; no interrupt to imagesearch
+	;mousemove, 0, 0 ; no interrupt to imagesearch
 	msg = [+] %id% FIND TRAINING START
 	log(msg)
 	WinActivate, %id%
