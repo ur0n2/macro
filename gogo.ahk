@@ -2,6 +2,12 @@
 global server_flag = False
 
 
+log(sentence){
+	global log_dir
+	FileAppend, [%A_Mon%/%A_Mday% %A_Hour%:%A_Min%:%A_Sec%] %sentence%`n, %log_dir%
+}
+
+
 refresh(id){
 	WinActivate, %id%
 	sleep,1000
@@ -21,6 +27,7 @@ refresh(id){
 	sleep, 500
 }
 
+
 set_login(id, pw){ ; id list: kara, kka, vm1, vm2 
 	WinActivate, %id%
 	sleep,1000
@@ -36,6 +43,7 @@ set_login(id, pw){ ; id list: kara, kka, vm1, vm2
 	sleep, 5000 ;10000 ; login time
 	tooltip, input_id_pw_success, 0, 0
 }
+
 
 start_winbaram(id, pw){
 	ToolTip, %id% gogo, 0, 0 
@@ -115,7 +123,6 @@ start_winbaram(id, pw){
 }
 
 
-
 semicolon_check(id){ ; with find_tree and find_training
 	WinActivate, %id%
 	sleep,1000
@@ -132,6 +139,7 @@ semicolon_check(id){ ; with find_tree and find_training
 
 
 server_reconn_check(id){
+	log("[+] SERVER RECONNECTION CHECK")
 	WinActivate, %id%	
 	sleep,1000
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, reconn.bmp
@@ -144,13 +152,16 @@ server_reconn_check(id){
 }
 
 server_check_sub:
-	server_reconn_check_result = server_reconn_check()
-	if (server_reconn_check_result){
+	log("[+] SERVER CHECK SUB")
+	server_reconn_check_result1 = server_reconn_check("카라")
+	server_reconn_check_result2 = server_reconn_check("끄아")
+	if (server_reconn_check_result1 || server_reconn_check_result2 ){
 		global server_flag = True
-		msgbox, , , server_check_test_msgbox
+		msgbox, , , server is down
 		return
 	}
 	return
+
 
 hit(id1,id2){
 	WinActivate, %id1%
@@ -161,19 +172,16 @@ hit(id1,id2){
 	refresh(id2)
 	; weather_off()
 	sleep, 2000
+	
+	log("[+] HITTING...")
 	while True{
-		loop, 9999{ 
-			controlsend, , {space}{space}{space}, %id1% ; need to test for effectiveness
-			sleep, 1 ; enough
-			controlsend, , {space}{space}{space}, %id2% ; need to test for effectiveness
-			sleep, 1 ; enough
-		}
-		server_status1 := server_reconn_check(id1)
-		server_status2 := server_reconn_check(id2)
-		if (server_status1 || server_status2)
-			return False
+		controlsend, , {space}{space}{space}, %id1% ; need to test for effectiveness
+		; sleep, 1 ; enough
+		controlsend, , {space}{space}{space}, %id2% ; need to test for effectiveness
+		sleep, 1 ; enough
 	}
 }
+
 
 go_training(id){
 	WinActivate, %id%
@@ -205,8 +213,6 @@ go_training(id){
   
 	return False ;return find_training()
 }
-
-
 
 
 find_tree(id){
@@ -405,7 +411,6 @@ clean_process(){
 }
 
 
-
 init_start(id1, id2){ 
 	;msgbox, , %id1%
 	ToolTip, start-winbaram, 0, 0
@@ -419,26 +424,36 @@ init_start(id1, id2){
 }
 
 
+
+
 ;main
 main(id1, id2)
 {
+	log("[+] MAIN START")
 	ToolTip, start-macro, 0, 0
-	playing = true
+	playing = true ; deprecate
 	
+	log("[+] INIT START")
 	init_start_result := init_start(id1, id2)
-	;msgbox % init_start_result
+	
 	if ( init_start_result := False ){
+		log("[-] INIT START ERROR")
 		ToolTip, start_winbaram-error, 0, 0
 		return False ;clean()
 	}
 	else if ( init_start_result := True ){
+		log("[+] START WINBARAM SUCCESS")
 		ToolTip, start_winbaram-success, 0, 0
 		go_training_status := go_training(id1)
+		log("[+] GO TRAINING")
 		go_tree_status := go_tree(id2)
+		log("[+] GO TREE")
 		if (go_training_status is True ){	
+			log("[+] GO TRAINING SCENARIO START")
 			loop,6 { ; scenario 1
 				find_training_status := find_training(id1)
 				if (find_training_status ){
+					log("[+] FIND TRAINING !")
 					break
 				}
 				go_training_status := go_training(id1)
@@ -446,9 +461,11 @@ main(id1, id2)
 		}
 		
 		if (go_tree_status is True){
+			log("[+] GO TREE SCENARIO START")
 			loop,14 { ; scenario 1
 				find_tree_status := find_tree(id2)
 				if (find_tree_status ){
+					log("[+] FIND TREE !")
 					break
 				}
 				go_tree_status := go_tree(id2)
@@ -456,13 +473,16 @@ main(id1, id2)
 		}
 		if ( find_training_status && find_tree_status) {
 			while True{
+				log("[+] HIT START")
 				hit_result := hit(id1,id2)
 				if (hit_result is False){
+					log("[-] HIT ERROR")
 					return	
 				}
 			}
 		}
 		else{
+			log("[+] MAIN ERROR")
 			return
 		}
 	}
@@ -471,19 +491,30 @@ main(id1, id2)
 
 
 
+log_dir = log\log.txt
+FileCreateDir, log
 
 F1:: 
-	settimer, server_check_sub, 5000 ;60000 
+	log("[+] START FB MACRO")
+	log("[+] START SETTIMER FOR SERVER STATUS")
+	
+	settimer, server_check_sub, 5000 ;60000 ;1minute 	
 	while true{	
 		if (clean_process()){
+			log("[+] CLEAN PROCESS COMPLETE")
 			if (global server_flag){
-				msgbox , , , flag reset
+				log("[+] SERVER DISCONNECTION... ")
+				msgbox , , , server_flag and timer reset
 				settimer, server_check_sub, off
 				global server_flag = false
 				goto, F1
 			}
+			else
+				log("[+] SERVER STATUS IS CLEAN")
 			main("카라", "끄아") ; send 다 아디로 
+			
 		}
+		log("[+] WAIT FOR SERVER REBOOT")
 		sleep, 15000 ; server reboot time
 	}
 
