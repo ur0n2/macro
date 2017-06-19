@@ -1,10 +1,26 @@
 sleep, 1000
-CenterWindow(WinTitle)
+
+WinActivate, ²ô¾Æ
+controlsend, , n, %id% ; name remove
+;loop, 17
+;	controlsend, , {RIGHT} , %id% ; just
+
+ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
+if ErrorLevel != 0 
 {
-    WinGetPos,,, Width, Height, %WinTitle%
-    WinMove, %WinTitle%,, (A_ScreenWidth/2)-(Width/16), (A_ScreenHeight/2)-(Height/2)
+	ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+	if ErrorLevel != 0 
+	{
+		ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
+		if ErrorLevl != 0 
+		{
+			msgbox, , , , no find
+		}
+	}
 }
-Run, "C:\Users\ur0n2\Desktop\123.lnk", , , pid1	
-Process, priority, %pid1%, High
-Winwait, Notice
-centerwindow(notice)
+
+if errorlevel = 0
+{
+	mousemove, fx+27, fy+40 ; mouseclick, left, fx+2, fy+2, 1
+
+}	

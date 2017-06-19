@@ -108,12 +108,14 @@ start_winbaram(id, pw){
 				WinActivate, %id%
 				sleep, 500
 				winmove, %id%, , 0, 0
-				log("[+] %id% - LOGIN SUCCESS")
+				msg = [+] %id% - LOGIN SUCCESS
+				log(msg)
 				return True				
 			}
 			else if errorlevel = 1
 			{
-				log("[-] %id% - LOGIN3 FAIL")
+				msg = [-] %id% - LOGIN3 FAIL
+				log(msg)
 				ToolTip, login3-error, 0, 0
 				return False
 			}
@@ -121,21 +123,24 @@ start_winbaram(id, pw){
 		else if errorlevel = 1
 		{
 			ToolTip, login2-error, 0, 0
-			log("[-] %id% - LOGIN2 FAIL")
+			msg = [-] %id% - LOGIN2 FAIL
+			log(msg)
 			return False
 		}	
 	  }
 	  else if errorlevel = 1
 	  {
 		ToolTip, login1-error, 0, 0
-		log("[-] %id% - LOGIN1 FAIL")
+		msg = [-] %id% - LOGIN1 FAIL
+		log(msg)
 		return False
 	  }
 	}
 	else if errorlevel = 1 
 	{
 		ToolTip, start-error, 0, 0
-		log("[-] %id% - LOGIN START FAIL")
+		msg = [-] %id% - LOGIN START FAIL
+		log(msg)
 		return False
 	}
 	msg = [-] %id% - NOT EXPECT SITUATION
@@ -243,9 +248,12 @@ go_training(id){
 
 find_tree(id)
 {
-	log("[+] %id% FIND TREE START")
+	mousemove, 0, 0
+	msg = [+] %id% FIND TREE START
+	log(msg)
 	WinActivate, %id%
 	sleep,1000
+	controlsend, , n, %id% ; name remove
 	;loop, 17
 	;	controlsend, , {RIGHT} , %id% ; just
 	
@@ -265,10 +273,10 @@ find_tree(id)
 	
 	if errorlevel = 0
 	{
-		mouseclick, left, fx+2, fy+2, 1
+		mouseclick, left, fx+27, fy+40, 1
 		sleep, 5000
 		
-		loop, 20
+		loop, 30
 			controlsend, , {;} , %id% 
 		sleep, 500
 		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, corr2.bmp
@@ -277,7 +285,7 @@ find_tree(id)
 		else
 		{
 			controlsend , , {DOWN}, %id% 
-			loop, 20
+			loop, 30
 				controlsend, , {;} , %id% 
 			sleep, 500
 		
@@ -286,7 +294,7 @@ find_tree(id)
 				return True
 			else{
 				controlsend , , {LEFT}, %id% 
-				loop, 20
+				loop, 30
 					controlsend, , {;} , %id% 
 				sleep, 500
 				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
@@ -294,7 +302,7 @@ find_tree(id)
 					return True
 				else{
 					controlsend , , {UP}, %id% 
-					loop, 20
+					loop, 30
 						controlsend, , {;} , %id% 
 					sleep, 500
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
@@ -302,7 +310,7 @@ find_tree(id)
 						return True
 					else{
 						controlsend , , {RIGHT}, %id% 
-						loop, 20
+						loop, 30
 							controlsend, , {;} , %id% 
 					}
 					sleep, 500
@@ -325,7 +333,9 @@ find_tree(id)
 
 
 find_training(id){ ; up, down, left, right of character semicolon check
-	log("[+] %id% FIND TRAINING START")
+	mousemove, 0, 0 ; no interrupt to imagesearch
+	msg = [+] %id% FIND TRAINING START
+	log(msg)
 	WinActivate, %id%
 	sleep,1000
 	
@@ -335,7 +345,7 @@ find_training(id){ ; up, down, left, right of character semicolon check
 		mouseclick, left, fx+5, fy+25, 1
 		sleep, 5000 ; move time
 		
-		loop, 20
+		loop, 30
 			controlsend, , {;} , %id% 
 		sleep, 500
 		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
@@ -343,7 +353,7 @@ find_training(id){ ; up, down, left, right of character semicolon check
 			return True
 		else{
 			controlsend , , {DOWN}, %id% 
-			loop, 20
+			loop, 30
 				controlsend, , {;} , %id% 
 			sleep, 500
 		
@@ -352,7 +362,7 @@ find_training(id){ ; up, down, left, right of character semicolon check
 				return True
 			else{
 				controlsend , , {LEFT}, %id% 
-				loop, 20
+				loop, 30
 					controlsend, , {;} , %id% 
 				sleep, 500
 				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
@@ -360,7 +370,7 @@ find_training(id){ ; up, down, left, right of character semicolon check
 					return True
 				else{
 					controlsend , , {UP}, %id% 
-					loop, 20
+					loop, 30
 						controlsend, , {;} , %id% 
 					sleep, 500
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
@@ -368,7 +378,7 @@ find_training(id){ ; up, down, left, right of character semicolon check
 						return True
 					else{
 						controlsend , , {RIGHT}, %id% 
-						loop, 20
+						loop, 30
 							controlsend, , {;} , %id% 
 					}
 					sleep, 500
@@ -417,7 +427,7 @@ go_tree(id){
 		if (find_moksuNPC_result){
 			sleep, 1000
 			controlsend, , {DOWN}, %id%  
-			sleep, 500
+			sleep, 1000
 			controlsend, , {ENTER}, %id%  
 			sleep, 500
 			log("[+] GO TREE SUCCESS")
@@ -484,8 +494,6 @@ init_start(id1, id2){
 	start:= start1 && start2 ; AND Operation
 	return start
 }
-
-
 
 
 ;main
@@ -560,7 +568,7 @@ F1::
 	log("[+] START FB MACRO")
 	log("[+] START SETTIMER FOR SERVER STATUS")
 	
-	settimer, server_check_sub, 300000 ;5minute 
+	settimer, server_check_sub, 30000 ;300000 ;5minute 
 	log("[+] SETTIMER ON FIRST")
 	while true{	
 		if (clean_process()){
