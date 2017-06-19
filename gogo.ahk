@@ -1,5 +1,13 @@
 #Persistent
 global server_flag = False
+log_dir = log\log.txt
+FileCreateDir, log
+
+MoveWindow(WinTitle)
+{
+    WinGetPos,,, Width, Height, %WinTitle%
+    WinMove, %WinTitle%,, (A_ScreenWidth/2)-(Width/16), (A_ScreenHeight/2)-(Height/2)
+}
 
 
 log(sentence){
@@ -50,35 +58,36 @@ set_login(id, pw){ ; id list: kara, kka, vm1, vm2
 
 
 start_winbaram(id, pw){
-	log("[+] START %id% - WINBARAM.EXE")
+	msg = [+] START %id% - WINBARAM.EXE
+	log(msg)
 	ToolTip, %id% gogo, 0, 0 
 	sleep, 200
-	
 	Run, "C:\Users\ur0n2\Desktop\123.lnk", , , pid1	
 	Process, priority, %pid1%, High
 	Winwait, Notice
-	sleep, 2000
+	MoveWindow(Notice)
+	sleep, 1000
 	if (ErrorLevel != 0){
 		log("[-] START WINBARAM IMAGESEARCH NOTICE ERROR") ;msgbox % "error"
 		return False
 	}	
 	;msgbox % pid1
-	sleep, 2000
-
-	log("[+] START %id% - LOGIN")
+	sleep, 1000
+	msg = [+] START %id% - LOGIN
+	log(msg)
 	ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp
 	;ImageSearch, fx, fy, 865, 649, 1142, 739, start.bmp
 
 	if errorlevel = 0
 	{
-	  mousemove, fx+25, fy+25
-	  mouseclick left, fx+25, fy+25, 2
-	  sleep, 5000 ;3000
-	  
-	  
-	  ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, login1.bmp
-	  if errorlevel = 0
-	  {
+		mousemove, fx+25, fy+25
+		mouseclick left, fx+25, fy+25, 2
+		sleep, 5000 ;3000
+		  
+		  
+		ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, login1.bmp
+		if errorlevel = 0
+		{
 		ToolTip, login1-sucess, 0, 0
 		mousemove, fx+11, fy+11
 		mouseclick left, fx+11, fy+11, 2
@@ -129,7 +138,8 @@ start_winbaram(id, pw){
 		log("[-] %id% - LOGIN START FAIL")
 		return False
 	}
-	log("[-] %id% - NOT EXPECT SITUATION")
+	msg = [-] %id% - NOT EXPECT SITUATION
+	log(msg)
 }
 
 
@@ -164,13 +174,15 @@ server_reconn_check(id){
 
 server_check_sub:
 	log("[+] SERVER CHECK SUB")
-	server_reconn_check_result1 = server_reconn_check("Ä«¶ó")
-	server_reconn_check_result2 = server_reconn_check("²ô¾Æ")
+	server_reconn_check_result1 := server_reconn_check("Ä«¶ó")
+	server_reconn_check_result2 := server_reconn_check("²ô¾Æ")
 	if (server_reconn_check_result1 || server_reconn_check_result2 ){
 		global server_flag = True
-		msgbox, , , server is down
+		msg = [+] SERVER FLAG IN SUB %server_flag%
+		log(msg)
+		msgbox, , , server is down, 1
 		LOG("[+] SERVER IS DOWN... RESTART !")
-		return
+		goto F1
 	}
 	return
 
@@ -229,24 +241,41 @@ go_training(id){
 }
 
 
-find_tree(id){
+find_tree(id)
+{
 	log("[+] %id% FIND TREE START")
 	WinActivate, %id%
 	sleep,1000
+	;loop, 17
+	;	controlsend, , {RIGHT} , %id% ; just
 	
-	ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *20 tree.bmp
+	ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
+	if ErrorLevel != 0 
+	{
+		ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+		if ErrorLevel != 0 
+		{
+			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
+			if ErrorLevl != 0 
+			{
+				return False
+			}
+		}
+	}
+	
 	if errorlevel = 0
 	{
-		mouseclick, left, fx+5, fy+25, 1
-		sleep, 2000
+		mouseclick, left, fx+2, fy+2, 1
+		sleep, 5000
 		
 		loop, 20
 			controlsend, , {;} , %id% 
 		sleep, 500
-		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
+		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, corr2.bmp
 		if errorlevel = 0
 			return True
-		else{
+		else
+		{
 			controlsend , , {DOWN}, %id% 
 			loop, 20
 				controlsend, , {;} , %id% 
@@ -292,6 +321,9 @@ find_tree(id){
 
 
 
+
+
+
 find_training(id){ ; up, down, left, right of character semicolon check
 	log("[+] %id% FIND TRAINING START")
 	WinActivate, %id%
@@ -301,7 +333,7 @@ find_training(id){ ; up, down, left, right of character semicolon check
 	if errorlevel = 0
 	{
 		mouseclick, left, fx+5, fy+25, 1
-		sleep, 2000
+		sleep, 5000 ; move time
 		
 		loop, 20
 			controlsend, , {;} , %id% 
@@ -357,7 +389,7 @@ find_moksuNPC(id){
 	WinActivate, %id%
 	sleep,1000
 	;win activate %id%
-	ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  moksuNPC.bmp
+	ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, moksuNPC.bmp
 	if errorlevel = 0 
 	{
 		mouseclick, left, fx+5, fy+5, 3
@@ -389,7 +421,7 @@ go_tree(id){
 			controlsend, , {ENTER}, %id%  
 			sleep, 500
 			log("[+] GO TREE SUCCESS")
-			find_tree_result  = find_tree(id)
+			find_tree_result := find_tree(id)
 			if (find_tree_result) {
 				return True
 			}
@@ -412,7 +444,7 @@ go_tree(id){
 			controlsend, , {ENTER}, %id%  
 			sleep, 500
 			log("[+] GO TREE SUCCESS")
-			find_tree_result  = find_tree(id)
+			find_tree_result := find_tree(id)
 			if (find_tree_result) {
 				return True
 			}
@@ -444,6 +476,8 @@ init_start(id1, id2){
 	ToolTip, start-winbaram, 0, 0
 	send, #m
 	start1 := start_winbaram(id1, "123123")
+	msgbox, , ,%start1%, 2
+	sleep, 5000
 	WinWait, %id1%, , 60
 	start2 := start_winbaram(id2, "123123")
 	WinWait, %id2%, , 60
@@ -458,11 +492,13 @@ init_start(id1, id2){
 main(id1, id2)
 {
 	log("[+] MAIN START")
+	MouseMove, 0, 0 ; for notice button. chang the image at on focus 
 	ToolTip, start-macro, 0, 0
 	playing = true ; deprecate
 	
-	log("[+] INIT START")
 	init_start_result := init_start(id1, id2)
+	msg = [+] init_start_result: %init_start_result%
+	log(msg)
 	
 	if ( init_start_result := False ){
 		log("[-] INIT START ERROR")
@@ -519,28 +555,32 @@ main(id1, id2)
 
 
 
-log_dir = log\log.txt
-FileCreateDir, log
 
 F1:: 
 	log("[+] START FB MACRO")
 	log("[+] START SETTIMER FOR SERVER STATUS")
 	
-	settimer, server_check_sub, 5000 ;60000 ;1minute 	
+	settimer, server_check_sub, 300000 ;5minute 
+	log("[+] SETTIMER ON FIRST")
 	while true{	
 		if (clean_process()){
 			log("[+] CLEAN PROCESS COMPLETE")
-			if (global server_flag){
+			log(server_flag)
+			if (server_flag){
 				log("[+] SERVER DISCONNECTION... ")
-				msgbox , , , server_flag and timer reset
+				msgbox , , , server_flag and timer reset, 1
 				settimer, server_check_sub, off
+				log("[-] SETTIMER OFF")
 				global server_flag = false
-				goto, F1
+				msg = [+] SERVER FLAG IN WHILE %server_flag%
+				log(msg)
+				;goto F1
 			}
 			else
 				log("[+] SERVER STATUS IS CLEAN")
-			main("Ä«¶ó", "²ô¾Æ") ; send ´Ù ¾Æµð·Î 
-			
+			main_result := main("Ä«¶ó", "²ô¾Æ") ; send ´Ù ¾Æµð·Î 
+			if (main_result = False)
+				goto F1
 		}
 		log("[+] WAIT FOR SERVER REBOOT")
 		sleep, 15000 ; server reboot time
@@ -563,6 +603,8 @@ set_option(){ ; deprecate
 	;¿Ê¹þ±â
 	; ±Ó°ÅºÎµî 
 		;³¯¾¾²ô±â ÇÊ¼ö±¸³ª 
+	;ÀÌ¸§¾Èº¸ÀÌ±â#ClipboardTimeo
+	; ¹«±â³¢±â#ClipboardTimeout
 }
 
 go_coordinate(wx, wy){
