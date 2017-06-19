@@ -1,14 +1,7 @@
-#Persistent
 
-SetTimer, F1, 500
-return
-
-
+id = Ä«¶ó
 F1::
-
-;SetTimer, Alert1, Off  ; i.e. the timer turns itself off here.
-msgbox,  , The video conversion is finished.
-return
-
+msg = [+] %id% LOGIN SUCCESS 
+msgbox, , , %msg%, 1
 F2::
 ExitApp

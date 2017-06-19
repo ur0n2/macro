@@ -25,6 +25,8 @@ refresh(id){
 	controlsend, ,{ctrl down}r, %id%
 	controlsend, ,{ctrl up}, %id%
 	sleep, 500
+	msg = [+] %id% SCREEN REFRESH SUCCESS
+	log(msg)
 }
 
 
@@ -42,10 +44,13 @@ set_login(id, pw){ ; id list: kara, kka, vm1, vm2
 	send, {enter}			
 	sleep, 5000 ;10000 ; login time
 	tooltip, input_id_pw_success, 0, 0
+	msg = [+] %id% LOGIN SUCCESS
+	log(msg)
 }
 
 
 start_winbaram(id, pw){
+	log("[+] START %id% - WINBARAM.EXE")
 	ToolTip, %id% gogo, 0, 0 
 	sleep, 200
 	
@@ -54,13 +59,13 @@ start_winbaram(id, pw){
 	Winwait, Notice
 	sleep, 2000
 	if (ErrorLevel != 0){
-		msgbox % "error"
+		log("[-] START WINBARAM IMAGESEARCH NOTICE ERROR") ;msgbox % "error"
 		return False
 	}	
 	;msgbox % pid1
 	sleep, 2000
 
-
+	log("[+] START %id% - LOGIN")
 	ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp
 	;ImageSearch, fx, fy, 865, 649, 1142, 739, start.bmp
 
@@ -94,32 +99,37 @@ start_winbaram(id, pw){
 				WinActivate, %id%
 				sleep, 500
 				winmove, %id%, , 0, 0
-				return True
+				log("[+] %id% - LOGIN SUCCESS")
+				return True				
 			}
 			else if errorlevel = 1
 			{
-				ToolTip, login1-error, 0, 0
+				log("[-] %id% - LOGIN3 FAIL")
+				ToolTip, login3-error, 0, 0
 				return False
 			}
 		}
 		else if errorlevel = 1
 		{
 			ToolTip, login2-error, 0, 0
+			log("[-] %id% - LOGIN2 FAIL")
 			return False
 		}	
 	  }
 	  else if errorlevel = 1
 	  {
 		ToolTip, login1-error, 0, 0
+		log("[-] %id% - LOGIN1 FAIL")
 		return False
 	  }
 	}
 	else if errorlevel = 1 
 	{
 		ToolTip, start-error, 0, 0
+		log("[-] %id% - LOGIN START FAIL")
 		return False
 	}
-	ToolTip, login Success, 0, 0	
+	log("[-] %id% - NOT EXPECT SITUATION")
 }
 
 
@@ -131,6 +141,7 @@ semicolon_check(id){ ; with find_tree and find_training
 		ControlSend, , {;}, %id%
 		sleep, 1
 	}
+	log("[+] RECOGNIZE TO OBJECT FROM SEMICOLON")
 	return True
 	; if namu~ return bulmok ; image search message
 	; else if namu~ return training
@@ -158,6 +169,7 @@ server_check_sub:
 	if (server_reconn_check_result1 || server_reconn_check_result2 ){
 		global server_flag = True
 		msgbox, , , server is down
+		LOG("[+] SERVER IS DOWN... RESTART !")
 		return
 	}
 	return
@@ -173,7 +185,7 @@ hit(id1,id2){
 	; weather_off()
 	sleep, 2000
 	
-	log("[+] HITTING...")
+	log("[+] HITTING... !")
 	while True{
 		controlsend, , {space}{space}{space}, %id1% ; need to test for effectiveness
 		; sleep, 1 ; enough
@@ -196,6 +208,7 @@ go_training(id){
 		sleep, 500
 		ControlSend, , {RIGHT}{ENTER}, %id%
 		sleep, 500
+		log("[+] GO TRAINING SUCCESS")
 		return True ; no map check
 	}
 	else{
@@ -207,6 +220,7 @@ go_training(id){
 		sleep, 500
 		ControlSend, , {RIGHT}{ENTER}, %id%
 		sleep, 500
+		log("[+] GO TRAINING SUCCESS")
 		return True
 	}
 	
@@ -216,6 +230,7 @@ go_training(id){
 
 
 find_tree(id){
+	log("[+] %id% FIND TREE START")
 	WinActivate, %id%
 	sleep,1000
 	
@@ -276,7 +291,9 @@ find_tree(id){
 }
 
 
-find_training(id){
+
+find_training(id){ ; up, down, left, right of character semicolon check
+	log("[+] %id% FIND TRAINING START")
 	WinActivate, %id%
 	sleep,1000
 	
@@ -336,7 +353,6 @@ find_training(id){
 		return False
 }
 
-
 find_moksuNPC(id){
 	WinActivate, %id%
 	sleep,1000
@@ -345,8 +361,10 @@ find_moksuNPC(id){
 	if errorlevel = 0 
 	{
 		mouseclick, left, fx+5, fy+5, 3
+		log("[+] FIND MOKSU-NPC SUCCESS")
 		return True
 	}
+	log("[-] FIND MOKSU-NPC FAIL")
 	return False
 }
 
@@ -365,15 +383,18 @@ go_tree(id){
 		sleep, 500
 		find_moksuNPC_result := find_moksuNPC(id)
 		if (find_moksuNPC_result){
-			sleep, 500
+			sleep, 1000
 			controlsend, , {DOWN}, %id%  
 			sleep, 500
 			controlsend, , {ENTER}, %id%  
 			sleep, 500
+			log("[+] GO TREE SUCCESS")
 			find_tree_result  = find_tree(id)
 			if (find_tree_result) {
 				return True
 			}
+			else
+				log("[-] GO TREE FAIL")
 		}
 	}
 	else{ ; ∆Ú¿œ
@@ -390,12 +411,16 @@ go_tree(id){
 			sleep, 500
 			controlsend, , {ENTER}, %id%  
 			sleep, 500
+			log("[+] GO TREE SUCCESS")
 			find_tree_result  = find_tree(id)
 			if (find_tree_result) {
 				return True
 			}
+			else
+				log("[-] GO TREE FAIL")
 		}
 	}
+	log("[-] GO TREE FAIL")
 	return False
 }
 
@@ -407,11 +432,14 @@ clean_process(){
 		
 	send, #m
 	send, #m
+	
+	log("[+] CLEAN PROCESS COMPLETE")
 	return True
 }
 
 
 init_start(id1, id2){ 
+	log("[+] INIT START")
 	;msgbox, , %id1%
 	ToolTip, start-winbaram, 0, 0
 	send, #m
@@ -462,7 +490,7 @@ main(id1, id2)
 		
 		if (go_tree_status is True){
 			log("[+] GO TREE SCENARIO START")
-			loop,14 { ; scenario 1
+			loop,11 { ; scenario 1
 				find_tree_status := find_tree(id2)
 				if (find_tree_status ){
 					log("[+] FIND TREE !")
