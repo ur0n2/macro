@@ -1,3 +1,7 @@
+#Persistent
+global server_flag = False
+
+
 refresh(id){
 	WinActivate, %id%
 	sleep,1000
@@ -126,17 +130,27 @@ semicolon_check(id){ ; with find_tree and find_training
 	; else false
 }
 
+
 server_reconn_check(id){
-	WinActivate, %id%
+	WinActivate, %id%	
 	sleep,1000
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, reconn.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10  ;msgbox, , , findit!
-		winkill, %id%
+		; winkill, %id%
 		return True
 	}
 	return False
 }
+
+server_check_sub:
+	server_reconn_check_result = server_reconn_check()
+	if (server_reconn_check_result){
+		global server_flag = True
+		msgbox, , , server_check_test_msgbox
+		return
+	}
+	return
 
 hit(id1,id2){
 	WinActivate, %id1%
@@ -156,7 +170,7 @@ hit(id1,id2){
 		}
 		server_status1 := server_reconn_check(id1)
 		server_status2 := server_reconn_check(id2)
-		if (server_status1 && server_status2)
+		if (server_status1 || server_status2)
 			return False
 	}
 }
@@ -422,7 +436,7 @@ main(id1, id2)
 		go_training_status := go_training(id1)
 		go_tree_status := go_tree(id2)
 		if (go_training_status is True ){	
-			loop,6 {
+			loop,6 { ; scenario 1
 				find_training_status := find_training(id1)
 				if (find_training_status ){
 					break
@@ -432,7 +446,7 @@ main(id1, id2)
 		}
 		
 		if (go_tree_status is True){
-			loop,7 {
+			loop,14 { ; scenario 1
 				find_tree_status := find_tree(id2)
 				if (find_tree_status ){
 					break
@@ -456,18 +470,28 @@ main(id1, id2)
 
 
 
+
+
 F1:: 
-while true{
-	if (clean_process())
-		main("카라", "끄아") ; send 다 아디로 
-	sleep, 15000 ; server reboot time
-}
+	settimer, server_check_sub, 5000 ;60000 
+	while true{	
+		if (clean_process()){
+			if (global server_flag){
+				msgbox , , , flag reset
+				settimer, server_check_sub, off
+				global server_flag = false
+				goto, F1
+			}
+			main("카라", "끄아") ; send 다 아디로 
+		}
+		sleep, 15000 ; server reboot time
+	}
 
 
 F2::
-ToolTip, end-macro, 0, 0
-playing = false
-ExitApp	
+	ToolTip, end-macro, 0, 0
+	playing = false
+	ExitApp	
 
 F3::
 
