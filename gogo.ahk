@@ -1,13 +1,9 @@
 #Persistent
 global server_flag = False
+global no_response_flag = False
 log_dir = log\log.txt
 FileCreateDir, log
 
-MoveWindow(WinTitle)
-{
-    WinGetPos,,, Width, Height, %WinTitle%
-    WinMove, %WinTitle%,, (A_ScreenWidth/2)-(Width/16), (A_ScreenHeight/2)-(Height/2)
-}
 
 
 log(sentence){
@@ -65,15 +61,14 @@ start_winbaram(id, pw){
 	Run, "C:\Users\ur0n2\Desktop\123.lnk", , , pid1	
 	Process, priority, %pid1%, High
 	Winwait, Notice
-	MoveWindow(Notice)
+	winmove Notice, , A_ScreenWidth/2, 0  ; for imagesearch. because notice window is upper than any windows
 	sleep, 1000
 	if (ErrorLevel != 0){
-		log("[-] START WINBARAM IMAGESEARCH NOTICE ERROR") ;msgbox % "error"
+		msg = [-] IMAGE-SEARCH ERROR FROE NOTICE - %id%
+		log(msg)
 		return False
-	}	
-	;msgbox % pid1
-	sleep, 1000
-	msg = [+] START %id% - LOGIN
+	}		
+	msg = [+] START LOGIN - %id%
 	log(msg)
 	ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp
 	;ImageSearch, fx, fy, 865, 649, 1142, 739, start.bmp
@@ -143,20 +138,21 @@ start_winbaram(id, pw){
 		log(msg)
 		return False
 	}
-	msg = [-] %id% - NOT EXPECT SITUATION
+	msg = [-] UNEXPECTED SITUATION - %id%
 	log(msg)
 }
 
 
 semicolon_check(id){ ; with find_tree and find_training
 	WinActivate, %id%
-	sleep,1000
+	sleep, 200
 	refresh(id)
-	loop, 10{
+	loop, 30{
 		ControlSend, , {;}, %id%
 		sleep, 1
 	}
-	log("[+] RECOGNIZE TO OBJECT FROM SEMICOLON")
+	msg = [+] RECOGNIZE TO TARGET OBJECT FROM SEMICOLON - %id%
+	log(msg)	
 	return True
 	; if namu~ return bulmok ; image search message
 	; else if namu~ return training
@@ -165,13 +161,15 @@ semicolon_check(id){ ; with find_tree and find_training
 
 
 server_reconn_check(id){
-	log("[+] SERVER RECONNECTION CHECK")
+	msg = [+] SERVER RECONNECTION CHECK - %id%
+	log(msg)
 	WinActivate, %id%	
 	sleep,1000
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, reconn.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10  ;msgbox, , , findit!
-		; winkill, %id%
+		msg = [-] SERVER DISCONNECDTION IMAGE FINDED - %id%
+		log(msg)		
 		return True
 	}
 	return False
@@ -183,16 +181,16 @@ server_check_sub:
 	server_reconn_check_result2 := server_reconn_check("²ô¾Æ")
 	if (server_reconn_check_result1 || server_reconn_check_result2 ){
 		global server_flag = True
-		msg = [+] SERVER FLAG IN SUB %server_flag%
+		msg = [+] SERVER FLAG IN server_check_sub PROCEDURE: %server_flag%
 		log(msg)
 		msgbox, , , server is down, 1
-		LOG("[+] SERVER IS DOWN... RESTART !")
+		LOG("[-] SERVER IS DOWN... RESTART !")
 		goto F1
 	}
 	return
 
 
-hit(id1,id2){
+hit(id1, id2){
 	WinActivate, %id1%
 	sleep,1000
 	refresh(id1)
@@ -225,8 +223,9 @@ go_training(id){
 		sleep, 500
 		ControlSend, , {RIGHT}{ENTER}, %id%
 		sleep, 500
-		log("[+] GO TRAINING SUCCESS")
-		return True ; no map check
+		msg = [+] GO TRAINING SUCCESS - %id%
+		log(msg)
+		return True ; no map name check
 	}
 	else{
 		controlsend, , {ctrl down}e{ctrl up}, %id%
@@ -237,7 +236,8 @@ go_training(id){
 		sleep, 500
 		ControlSend, , {RIGHT}{ENTER}, %id%
 		sleep, 500
-		log("[+] GO TRAINING SUCCESS")
+		msg = [+] GO TRAINING SUCCESS - %id%
+		log(msg)
 		return True
 	}
 	
@@ -249,14 +249,16 @@ go_training(id){
 find_tree(id)
 {
 	;mousemove, 0, 0
-	msg = [+] %id% FIND TREE START
+	msg = [+] FIND TREE START - %id%
 	log(msg)
 	WinActivate, %id%
 	sleep,1000
 	controlsend, , n, %id% ; name remove
 	;loop, 17
-	;	controlsend, , {RIGHT} , %id% ; just
+	;	controlsend, , {RIGHT} , %id% ; just for recoginize high probability. deprecate
 	
+	
+	;find tree
 	ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
 	if ErrorLevel != 0 
 	{
@@ -271,49 +273,44 @@ find_tree(id)
 		}
 	}
 	
+	
+	;after find tree sucess
 	if errorlevel = 0
 	{
 		mouseclick, left, fx+27, fy+40, 1
-		sleep, 5000
+		sleep, 5000 ; go to the tree
 		
-		loop, 30
-			controlsend, , {;} , %id% 
-		sleep, 500
-		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, corr2.bmp
-		if errorlevel = 0
+		semicolon_check(id)
+				
+		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, corr2.bmp		
+		if errorlevel = 0{
+			
 			return True
+		}
 		else
 		{
 			controlsend , , {DOWN}, %id% 
-			loop, 30
-				controlsend, , {;} , %id% 
-			sleep, 500
+			semicolon_check(id)
 		
 			ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
 			if errorlevel = 0
 				return True
 			else{
 				controlsend , , {LEFT}, %id% 
-				loop, 30
-					controlsend, , {;} , %id% 
-				sleep, 500
+				semicolon_check(id)
 				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
 				if errorlevel = 0
 					return True
 				else{
 					controlsend , , {UP}, %id% 
-					loop, 30
-						controlsend, , {;} , %id% 
-					sleep, 500
+					semicolon_check(id)
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
 					if errorlevel = 0
 						return True
 					else{
 						controlsend , , {RIGHT}, %id% 
-						loop, 30
-							controlsend, , {;} , %id% 
+						semicolon_check(id)
 					}
-					sleep, 500
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
 					if errorlevel = 0
 						return True
@@ -329,12 +326,9 @@ find_tree(id)
 
 
 
-
-
-
 find_training(id){ ; up, down, left, right of character semicolon check
 	;mousemove, 0, 0 ; no interrupt to imagesearch
-	msg = [+] %id% FIND TRAINING START
+	msg = [+] FIND TRAINING START - %id%
 	log(msg)
 	WinActivate, %id%
 	sleep,1000
@@ -345,43 +339,33 @@ find_training(id){ ; up, down, left, right of character semicolon check
 		mouseclick, left, fx+5, fy+25, 1
 		sleep, 5000 ; move time
 		
-		loop, 30
-			controlsend, , {;} , %id% 
-		sleep, 500
-		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
+		semicolon_check(id)
+		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp ; training name list in status window
 		if errorlevel = 0
 			return True
 		else{
 			controlsend , , {DOWN}, %id% 
-			loop, 30
-				controlsend, , {;} , %id% 
-			sleep, 500
+			semicolon_check(id)
 		
 			ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
 			if errorlevel = 0
 				return True
 			else{
 				controlsend , , {LEFT}, %id% 
-				loop, 30
-					controlsend, , {;} , %id% 
-				sleep, 500
+				semicolon_check(id)
 				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
 				if errorlevel = 0
 					return True
 				else{
 					controlsend , , {UP}, %id% 
-					loop, 30
-						controlsend, , {;} , %id% 
-					sleep, 500
+					semicolon_check(id)
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
 					if errorlevel = 0
 						return True
 					else{
 						controlsend , , {RIGHT}, %id% 
-						loop, 30
-							controlsend, , {;} , %id% 
+						semicolon_check(id)
 					}
-					sleep, 500
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
 					if errorlevel = 0
 						return True
@@ -403,10 +387,12 @@ find_moksuNPC(id){
 	if errorlevel = 0 
 	{
 		mouseclick, left, fx+5, fy+5, 3
-		log("[+] FIND MOKSU-NPC SUCCESS")
+		msg = [+] FIND MOKSU-NPC SUCCESS - %id%
+		log(msg)
 		return True
 	}
-	log("[-] FIND MOKSU-NPC FAIL")
+	msg = [-] FIND MOKSU-NPC FAIL - %id%
+	log(msg)
 	return False
 }
 
@@ -522,24 +508,26 @@ main(id1, id2)
 		log("[+] GO TREE")
 		if (go_training_status is True ){	
 			log("[+] GO TRAINING SCENARIO START")
-			loop,6 { ; scenario 1
+			loop, 6 { ; scenario 1
 				find_training_status := find_training(id1)
 				if (find_training_status ){
-					log("[+] FIND TRAINING !")
+					log("[+] FIND TRAINING SUCCESS !")
 					break
 				}
+				log("[-] FIND TRAINING FAIL RE-TRY")
 				go_training_status := go_training(id1)
 			}
 		}
 		
 		if (go_tree_status is True){
 			log("[+] GO TREE SCENARIO START")
-			loop,11 { ; scenario 1
+			loop, 11 { ; scenario 1
 				find_tree_status := find_tree(id2)
 				if (find_tree_status ){
-					log("[+] FIND TREE !")
+					log("[+] FIND TREE SUCCESS !")
 					break
 				}
+				log("[-] FIND TREE FAIL RE-TRY")
 				go_tree_status := go_tree(id2)
 			}
 		}
@@ -568,8 +556,9 @@ F1::
 	log("[+] START FB MACRO")
 	log("[+] START SETTIMER FOR SERVER STATUS")
 	
-	settimer, server_check_sub, 30000 ;300000 ;5minute 
-	log("[+] SETTIMER ON FIRST")
+	settimer, server_check_sub, 90000 ;1m30s
+	settimer, check_the_no_response, 300000 ;5m
+	log("[+] SETTIMER ON")
 	while true{	
 		if (clean_process()){
 			log("[+] CLEAN PROCESS COMPLETE")
@@ -580,10 +569,10 @@ F1::
 				settimer, server_check_sub, off
 				log("[-] SETTIMER OFF")
 				global server_flag = false
-				msg = [+] SERVER FLAG IN WHILE %server_flag%
+				msg = [+] SERVER FLAG INITALIZE IN WHILE %server_flag%
 				log(msg)
 				;goto F1
-			}
+			}	
 			else
 				log("[+] SERVER STATUS IS CLEAN")
 			main_result := main("Ä«¶ó", "²ô¾Æ") ; send ´Ù ¾Æµð·Î 
@@ -591,7 +580,7 @@ F1::
 				goto F1
 		}
 		log("[+] WAIT FOR SERVER REBOOT")
-		sleep, 15000 ; server reboot time
+		sleep, 15000 ; 15s server reboot time
 	}
 
 
