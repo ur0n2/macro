@@ -145,7 +145,7 @@ start_winbaram(id, pw){
 				log(msg)
 				return True				
 			}
-			else if errorlevel = 1
+			else ;if errorlevel = 1
 			{
 				msg = [-] %id% - LOGIN3 FAIL
 				log(msg)
@@ -153,7 +153,7 @@ start_winbaram(id, pw){
 				return False
 			}
 		}
-		else if errorlevel = 1
+		else ;if errorlevel = 1
 		{
 			ToolTip, login2-error, 0, 0
 			msg = [-] %id% - LOGIN2 FAIL
@@ -161,7 +161,7 @@ start_winbaram(id, pw){
 			return False
 		}	
 	  }
-	  else if errorlevel = 1
+	  else ;if errorlevel = 1
 	  {
 		ToolTip, login1-error, 0, 0
 		msg = [-] %id% - LOGIN1 FAIL
@@ -169,7 +169,7 @@ start_winbaram(id, pw){
 		return False
 	  }
 	}
-	else if errorlevel = 1 
+	else ;if errorlevel = 1 
 	{
 		ToolTip, start-error, 0, 0
 		msg = [-] %id% - LOGIN START FAIL
@@ -178,6 +178,7 @@ start_winbaram(id, pw){
 	}
 	msg = [-] UNEXPECTED SITUATION - %id%
 	log(msg)
+	return False
 }
 
 
@@ -199,7 +200,7 @@ semicolon_check(id){ ; with find_tree and find_training
 
 
 server_reconn_check(id){
-	msg = [+] SERVER RECONNECTION CHECK - %id%
+	msg = [+] SERVER RECONNECTION AND NO-RESPONSE CHECK - %id%
 	log(msg)
 	WinActivate, %id%	
 	sleep,1000
@@ -207,6 +208,13 @@ server_reconn_check(id){
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10  ;msgbox, , , findit!
 		msg = [-] SERVER DISCONNECDTION IMAGE FINDED - %id%
+		log(msg)		
+		return True
+	}
+	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, no_response.bmp
+	if (errorlevel = 0) {
+		tooltip, server_reconnection, 10, 10  ;msgbox, , , findit!
+		msg = [-] WINBARAM.EXE NO RESPONSE IMAGE FINDED - %id%
 		log(msg)		
 		return True
 	}

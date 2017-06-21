@@ -16,14 +16,19 @@ server_check_sub:
 	}
 	return
 
+no_response(){
+	msgbox, , , noresponse,2
+}
 
 F1::
 	SetTimer, server_check_sub, 3000
+	settimer, no_response, 5000
 	while True{	
 		msgbox, , %flag% ,2 
 		if (global flag){
 			msgbox , , , flag reset ,2 
 			settimer, server_check_sub, off
+			settimer, no_response, off
 			global flag = False
 			goto, F1
 		}
