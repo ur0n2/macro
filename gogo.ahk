@@ -176,7 +176,7 @@ start_winbaram(id, pw){
 		log(msg)
 		return False
 	}
-	msg = [-] UNEXPECTED SITUATION - %id%
+	msg = [-] UNEXPECTED SITUATION IN START_WINBARAM FUNCTION- %id%
 	log(msg)
 	return False
 }
@@ -624,15 +624,18 @@ main(id1, id2)
 				hit_result := hit(id1,id2)
 				if (hit_result is False){
 					log("[-] HIT ERROR")
-					return	
+					return False
 				}
 			}
 		}
 		else{
 			log("[+] MAIN ERROR")
-			return
+			return False
 		}
 	}
+	msg = [-] UNEXPECTED SITUATION IN MAIN FUNCTION- %id%
+	log(msg)
+	return False
 }
 
 
