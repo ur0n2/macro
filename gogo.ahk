@@ -1,16 +1,56 @@
 #Persistent
 global server_flag = False
 global no_response_flag = False
-log_dir = log\log.txt
-FileCreateDir, log
+
+;log_init
+log_files_count(Directory)
+{			
+	log_count = 0
+	Loop, %Directory%\*.txt
+	{
+		log_count := log_count + 1 
+	}
+	return log_count
+}
+
+log_init() {
+	global log_dir
+	FileCreateDir, log
+	log_dir_path  = .\\log ; relative path
+	log_count := log_files_count(log_dir_path)
+	msgbox, , , log file count: %log_count%, 1
+	if (log_count <= 0){		
+		last_log_file = %log_dir_path%\\log%log_count%.txt ;.\\log\\log{n}.txt
+	}
+	else {
+		;log files counting for last log file to append.
+		last_log_file = %log_dir_path%\\log%log_count%.txt ;.\\log\\log{n}.txt
+		msgbox, , , last log file: %last_log_file%, 1
+	}
+	;get last log file size
+	FileGetSize, last_log_file_size, %last_log_file%, K
+	if (!last_log_file_size) { ; first log file create
+		last_log_file = %log_dir_path%\\log1.txt 		
+	}
+	msgbox, , , last log file size: %last_log_file_size%, 1
 
 
+	;last log file size check. and log_dir variable set
+	if (last_log_file_size >= 400) { ; if above 400KB then, create to new last log file
+		num := log_count +1	
+		log_dir = log\log%num%.txt	
+	}
+	else { ; if <400KB then, maintain present log file
+		log_dir = log\log%log_count%.txt
+		;msgbox, , , %log_dir%
+	}
+	
+}
 
-log(sentence){
+log(sentence) {
 	global log_dir
 	FileAppend, [%A_Mon%/%A_Mday% %A_Hour%:%A_Min%:%A_Sec%] %sentence%`n, %log_dir%
 }
-
 
 refresh(id){
 	WinActivate, %id%
@@ -48,13 +88,11 @@ set_login(id, pw){ ; id list: kara, kka, vm1, vm2
 	send, {enter}			
 	sleep, 5000 ;10000 ; login time
 	tooltip, input_id_pw_success, 0, 0
-	msg = [+] %id% LOGIN SUCCESS
-	log(msg)
 }
 
 
 start_winbaram(id, pw){
-	msg = [+] START %id% - WINBARAM.EXE
+	msg = [+] START WINBARAM.EXE - %id%
 	log(msg)
 	ToolTip, %id% gogo, 0, 0 
 	sleep, 200
@@ -283,8 +321,8 @@ find_tree(id)
 		semicolon_check(id)
 				
 		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, corr2.bmp		
-		if errorlevel = 0{
-			
+		if errorlevel = 0
+		{
 			return True
 		}
 		else
@@ -295,19 +333,22 @@ find_tree(id)
 			ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
 			if errorlevel = 0
 				return True
-			else{
+			else
+			{
 				controlsend , , {LEFT}, %id% 
 				semicolon_check(id)
 				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
 				if errorlevel = 0
 					return True
-				else{
+				else
+				{
 					controlsend , , {UP}, %id% 
 					semicolon_check(id)
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
 					if errorlevel = 0
 						return True
-					else{
+					else
+					{
 						controlsend , , {RIGHT}, %id% 
 						semicolon_check(id)
 					}
@@ -411,18 +452,12 @@ go_tree(id){
 		sleep, 500
 		find_moksuNPC_result := find_moksuNPC(id)
 		if (find_moksuNPC_result){
-			sleep, 1000
+			sleep, 500
 			controlsend, , {DOWN}, %id%  
-			sleep, 1000
+			sleep, 500
 			controlsend, , {ENTER}, %id%  
 			sleep, 500
-			log("[+] GO TREE SUCCESS")
-			find_tree_result := find_tree(id)
-			if (find_tree_result) {
-				return True
-			}
-			else
-				log("[-] GO TREE FAIL")
+			return True
 		}
 	}
 	else{ ; 평일
@@ -439,19 +474,63 @@ go_tree(id){
 			sleep, 500
 			controlsend, , {ENTER}, %id%  
 			sleep, 500
+			return True
+		}
+	}
+	return False
+}
+/*
+go_tree(id)
+{
+	WinActivate, %id%
+	sleep,1000
+
+	refresh(id)
+	if ( A_WDay = 1 || A_WDay = 7 ){ ; weekend
+		controlsend, , uu, %id% 
+		sleep, 500
+		controlsend, , {DOWN}{DOWN}{DOWN}, %id%  
+		sleep, 500
+		controlsend, , {ENTER}, %id%  
+		sleep, 500
+		find_moksuNPC_result := find_moksuNPC(id)
+		if (find_moksuNPC_result){
+			sleep, 1000
+			controlsend, , {DOWN}, %id%  
+			sleep, 1000
+			controlsend, , {ENTER}, %id%  
+			sleep, 500
 			log("[+] GO TREE SUCCESS")
-			find_tree_result := find_tree(id)
-			if (find_tree_result) {
+			return True
+		}
+	}
+	else
+	{ ; 평일
+		controlsend, , uu, %id% 
+		sleep, 500
+		controlsend, , {DOWN}{DOWN}{DOWN}, %id%  
+		sleep, 500
+		controlsend, , {ENTER}, %id%  
+		sleep, 500
+		find_moksuNPC_result := find_moksuNPC(id)
+		if (find_moksuNPC_result){
+			sleep, 1000
+			controlsend, , {DOWN}, %id%  
+			sleep, 500
+			controlsend, , {ENTER}, %id%  
+			sleep, 500
+			log("[+] GO TREE SUCCESS")
 				return True
 			}
 			else
 				log("[-] GO TREE FAIL")
 		}
 	}
+
 	log("[-] GO TREE FAIL")
 	return False
 }
-
+*/
 
 clean_process(){
 	tooltip, clean_process, 0, 0
@@ -550,19 +629,17 @@ main(id1, id2)
 
 
 
-
-
 F1:: 
 	log("[+] START FB MACRO")
 	log("[+] START SETTIMER FOR SERVER STATUS")
 	
-	settimer, server_check_sub, 90000 ;1m30s
-	settimer, check_the_no_response, 300000 ;5m
+	settimer, server_check_sub, 300000 ;5m
+	;settimer, check_the_no_response, 300000 ;5m
 	log("[+] SETTIMER ON")
 	while true{	
 		if (clean_process()){
 			log("[+] CLEAN PROCESS COMPLETE")
-			log(server_flag)
+			;log(server_flag)
 			if (server_flag){
 				log("[+] SERVER DISCONNECTION... ")
 				msgbox , , , server_flag and timer reset, 1
