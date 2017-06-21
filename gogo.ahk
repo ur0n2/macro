@@ -581,12 +581,12 @@ main(id1, id2)
 	msg = [+] init_start_result: %init_start_result%
 	log(msg)
 	
-	if ( init_start_result := False ){
+	if ( init_start_result = False ){
 		log("[-] INIT START ERROR")
 		ToolTip, start_winbaram-error, 0, 0
 		return False ;clean()
 	}
-	else if ( init_start_result := True ){
+	else if ( init_start_result = True ){
 		log("[+] START WINBARAM SUCCESS")
 		ToolTip, start_winbaram-success, 0, 0
 		go_training_status := go_training(id1)
