@@ -223,8 +223,8 @@ server_reconn_check(id){
 
 server_check_sub:
 	log("[+] SERVER CHECK SUB")
-	server_reconn_check_result1 := server_reconn_check("Ä«¶ó")
-	server_reconn_check_result2 := server_reconn_check("²ô¾Æ")
+	server_reconn_check_result1 := server_reconn_check("À±¾Æ")
+	server_reconn_check_result2 := server_reconn_check("¼Õ³ªÀº")
 	if (server_reconn_check_result1 || server_reconn_check_result2 ){
 		global server_flag = True
 		msg = [+] SERVER FLAG IN server_check_sub PROCEDURE: %server_flag%
@@ -558,11 +558,11 @@ init_start(id1, id2){
 	;msgbox, , %id1%
 	ToolTip, start-winbaram, 0, 0
 	send, #m
-	start1 := start_winbaram(id1, "123123")
+	start1 := start_winbaram(id1, "¸Þ·Õ12")
 	msgbox, , ,%start1%, 2
 	sleep, 5000
 	WinWait, %id1%, , 60
-	start2 := start_winbaram(id2, "123123")
+	start2 := start_winbaram(id2, "¸Þ·Õ12")
 	WinWait, %id2%, , 60
 	start:= start1 && start2 ; AND Operation
 	return start
@@ -589,36 +589,36 @@ main(id1, id2)
 	else if ( init_start_result = True ){
 		log("[+] START WINBARAM SUCCESS")
 		ToolTip, start_winbaram-success, 0, 0
-		go_training_status := go_training(id1)
-		log("[+] GO TRAINING")
-		go_tree_status := go_tree(id2)
-		log("[+] GO TREE")
-		if (go_training_status is True ){	
-			log("[+] GO TRAINING SCENARIO START")
-			loop, 6 { ; scenario 1
-				find_training_status := find_training(id1)
-				if (find_training_status ){
-					log("[+] FIND TRAINING SUCCESS !")
+		go_tree_status1 := go_tree(id1)
+		log("[+] GO TREE1")
+		go_tree_status2 := go_tree(id2)
+		log("[+] GO TREE2")
+		if (go_tree_status1 is True){
+			log("[+] GO TREE SCENARIO START")
+			loop, 11 { ; scenario 1
+				find_tree_status1 := find_tree(id1)
+				if (find_tree_status1 ){
+					log("[+] FIND TREE SUCCESS !")
 					break
 				}
-				log("[-] FIND TRAINING FAIL RE-TRY")
-				go_training_status := go_training(id1)
+				log("[-] FIND TREE FAIL RE-TRY")
+				go_tree_status1 := go_tree(id1)
 			}
 		}
 		
 		if (go_tree_status is True){
 			log("[+] GO TREE SCENARIO START")
 			loop, 11 { ; scenario 1
-				find_tree_status := find_tree(id2)
-				if (find_tree_status ){
+				find_tree_status2 := find_tree(id2)
+				if (find_tree_status2 ){
 					log("[+] FIND TREE SUCCESS !")
 					break
 				}
 				log("[-] FIND TREE FAIL RE-TRY")
-				go_tree_status := go_tree(id2)
+				go_tree_status2 := go_tree(id2)
 			}
 		}
-		if ( find_training_status && find_tree_status) {
+		if ( find_tree_status1 && find_tree_status2) {
 			while True{
 				log("[+] HIT START")
 				hit_result := hit(id1,id2)
@@ -641,12 +641,10 @@ main(id1, id2)
 
 
 F1:: 
-	global server_flag
 	log_init()
 	log("[+] START FB MACRO")
 	log("[+] START SETTIMER FOR SERVER STATUS")
 	
-	server_flag = False
 	settimer, server_check_sub, 300000 ;5m
 	;settimer, check_the_no_response, 300000 ;5m
 	log("[+] SETTIMER ON")
@@ -659,14 +657,14 @@ F1::
 				msgbox , , , server_flag and timer reset, 1
 				settimer, server_check_sub, off
 				log("[-] SETTIMER OFF")
-				server_flag = False ;global server_flag = false
+				global server_flag = false
 				msg = [+] SERVER FLAG INITALIZE IN WHILE %server_flag%
 				log(msg)
 				;goto F1
 			}	
 			else
 				log("[+] SERVER STATUS IS CLEAN")
-			main_result := main("Ä«¶ó", "²ô¾Æ") ; send ´Ù ¾Æµð·Î 
+			main_result := main("À±¾Æ","¼Õ³ªÀº")
 			if (main_result = False)
 				goto F1
 		}
