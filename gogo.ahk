@@ -1,8 +1,5 @@
 #Persistent
-global server_flag = False
-global no_response_flag = False
 
-;log_init
 log_files_count(Directory)
 {			
 	log_count = 0
@@ -106,7 +103,7 @@ start_winbaram(id, pw){
 		log(msg)
 		return False
 	}		
-	msg = [+] START LOGIN - %id%
+	msg = [+] START logIN - %id%
 	log(msg)
 	ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp
 	;ImageSearch, fx, fy, 865, 649, 1142, 739, start.bmp
@@ -141,13 +138,13 @@ start_winbaram(id, pw){
 				WinActivate, %id%
 				sleep, 500
 				winmove, %id%, , 0, 0
-				msg = [+] %id% - LOGIN SUCCESS
+				msg = [+] %id% - logIN SUCCESS
 				log(msg)
 				return True				
 			}
 			else ;if errorlevel = 1
 			{
-				msg = [-] %id% - LOGIN3 FAIL
+				msg = [-] %id% - logIN3 FAIL
 				log(msg)
 				ToolTip, login3-error, 0, 0
 				return False
@@ -156,7 +153,7 @@ start_winbaram(id, pw){
 		else ;if errorlevel = 1
 		{
 			ToolTip, login2-error, 0, 0
-			msg = [-] %id% - LOGIN2 FAIL
+			msg = [-] %id% - logIN2 FAIL
 			log(msg)
 			return False
 		}	
@@ -164,7 +161,7 @@ start_winbaram(id, pw){
 	  else ;if errorlevel = 1
 	  {
 		ToolTip, login1-error, 0, 0
-		msg = [-] %id% - LOGIN1 FAIL
+		msg = [-] %id% - logIN1 FAIL
 		log(msg)
 		return False
 	  }
@@ -172,7 +169,7 @@ start_winbaram(id, pw){
 	else ;if errorlevel = 1 
 	{
 		ToolTip, start-error, 0, 0
-		msg = [-] %id% - LOGIN START FAIL
+		msg = [-] %id% - logIN START FAIL
 		log(msg)
 		return False
 	}
@@ -230,7 +227,12 @@ server_check_sub:
 		msg = [+] SERVER FLAG IN server_check_sub PROCEDURE: %server_flag%
 		log(msg)
 		msgbox, , , server is down, 1
-		LOG("[-] SERVER IS DOWN... RESTART !")
+		log("[-] SERVER IS DOWN... RESTART !")
+		
+		sleep, 15000 ; 15s server reboot time
+		log("[+] WAIT FOR SERVER REBOOTING...")
+		;settimer, server_check_sub, off
+		;log("[-] SETTIMER OFF")
 		goto F1
 	}
 	return
@@ -542,9 +544,10 @@ go_tree(id)
 
 clean_process(){
 	tooltip, clean_process, 0, 0
-	loop, 6
+	loop, 20{
 		process, close, winbaram.exe
-		
+		sleep, 500
+	}
 	send, #m
 	send, #m
 	
@@ -638,50 +641,83 @@ main(id1, id2)
 	return False
 }
 
+myip(){
+	ip = %A_IPAddress1%
+	return ip
+}
 
+
+id_pw_set(){
+	ip := myip()
+	
+	if (ip = x.x.x.x){
+		id1 = 
+		id1_pw = 
+		id2 = 
+		id2_pw = 
+	}
+	else if (ip = x.x.x.x){
+		id1 = 
+		id1_pw = 
+		id2 = 
+		id2_pw = 
+	}
+	
+}
+
+global playing = 1
+global id1
+global id1_pw
+global id2
+global id2_pw
 
 F1:: 
-	global server_flag
+	global server_flag = False
+	global no_response_flag = False
+	global playing := playing + 1
 	log_init()
-	log("[+] START FB MACRO")
-	log("[+] START SETTIMER FOR SERVER STATUS")
+	ip := myip()
+	msg = [+] START FB MACRO [%playing% DONE]- %ip%
+	log(msg)
 	
-	server_flag = False
+	msg = [+] ID / PW SETTING
+	log(msg)
+	
+	log("[+] START SETTIMER FOR SERVER STATUS")	
 	settimer, server_check_sub, 300000 ;5m
 	;settimer, check_the_no_response, 300000 ;5m
 	log("[+] SETTIMER ON")
 	while true{	
 		if (clean_process()){
-			log("[+] CLEAN PROCESS COMPLETE")
-			;log(server_flag)
+			log("[+] CLEAN PROCESS COMPLETE")			
 			if (server_flag){
 				log("[+] SERVER DISCONNECTION... ")
 				msgbox , , , server_flag and timer reset, 1
-				settimer, server_check_sub, off
-				log("[-] SETTIMER OFF")
-				server_flag = False ;global server_flag = false
-				msg = [+] SERVER FLAG INITALIZE IN WHILE %server_flag%
-				log(msg)
-				;goto F1
+				server_flag = False ; equally global server_flag = false
+				msg = [+] SERVER FLAG INITALIZE TO FALSE
+				log(msg)				
 			}	
 			else
-				log("[+] SERVER STATUS IS CLEAN")
+				log("[+] SERVER STATUS IS CLEAN") ;WINBARAM STATUS IS CLEAN
 			main_result := main("카라", "끄아") ; send 다 아디로 
-			if (main_result = False)
+			if (main_result = False){
+				log("[-] MAIN RESULT IS FALSE GOTO F1");
 				goto F1
-		}
-		log("[+] WAIT FOR SERVER REBOOT")
-		sleep, 15000 ; 15s server reboot time
+			}
+		}		
 	}
 
 
 F2::
 	ToolTip, end-macro, 0, 0
-	playing = false
+	log("[+] FB MACRO END")
 	ExitApp	
 
 F3::
 	Pause
+	
+F4::
+	Reload
 	
 	
 go_smithy(){ ; 대장간
