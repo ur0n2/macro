@@ -508,7 +508,7 @@ move_tree_map(id){
 	sleep,1000
 	
 	refresh(id)
-	if ( A_WDay = 1 || A_WDay = 7 ){ ; 林富
+	if ( A_WDay = 1 || A_WDay = 7 ) { ; 林富
 		controlsend, , uu, %id% 
 		sleep, 500
 		controlsend, , {DOWN}{DOWN}{DOWN}, %id%  
