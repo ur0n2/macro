@@ -53,19 +53,18 @@ refresh(id){
 	WinActivate, %id%
 	sleep,1000
 	
-	sleep, 500
 	controlsend, ,{ESC}, %id%
 	controlsend, ,{ESC}, %id%
-	sleep, 500
+	sleep, 200
 	controlsend, ,s, %id%
 	controlsend, ,s, %id%
-	sleep, 500
+	sleep, 200
 	controlsend, ,{ctrl down}r, %id%
 	controlsend, ,{ctrl up}, %id%
 	sleep, 200
 	controlsend, ,{ctrl down}r, %id%
 	controlsend, ,{ctrl up}, %id%
-	sleep, 500
+	sleep,200
 	msg = [+] %id% SCREEN REFRESH SUCCESS
 	log(msg)
 }
@@ -93,13 +92,13 @@ start_winbaram(id, pw){
 	log(msg)
 	ToolTip, %id% gogo, 0, 0 
 	sleep, 200
-	Run, "C:\Users\ur0n2\Desktop\123.lnk", , , pid1	
+	Run, winbaram_path, , , pid1	
 	Process, priority, %pid1%, High
 	Winwait, Notice
 	winmove Notice, , A_ScreenWidth/2, 0  ; for imagesearch. because notice window is upper than any windows
 	sleep, 1000
 	if (ErrorLevel != 0){
-		msg = [-] IMAGE-SEARCH ERROR FROE NOTICE - %id%
+		msg = [-] IMAGE-SEARCH ERROR FROM NOTICE - %id%
 		log(msg)
 		return False
 	}		
@@ -138,8 +137,9 @@ start_winbaram(id, pw){
 				WinActivate, %id%
 				sleep, 500
 				winmove, %id%, , 0, 0
-				msg = [+] %id% - logIN SUCCESS
+				msg = [+] %id% - LOGIN SUCCESS
 				log(msg)
+				gosub, server_check_sub ; first login and first check
 				return True				
 			}
 			else ;if errorlevel = 1
@@ -220,9 +220,9 @@ server_reconn_check(id){
 
 server_check_sub:
 	log("[+] SERVER CHECK SUB")
-	server_reconn_check_result1 := server_reconn_check("카라")
-	server_reconn_check_result2 := server_reconn_check("끄아")
-	if (server_reconn_check_result1 || server_reconn_check_result2 ){
+	server_reconn_check_result1 := server_reconn_check(id1)
+	server_reconn_check_result2 := server_reconn_check(id2)
+	if (server_reconn_check_result1 || server_reconn_check_rsesult2 ){
 		global server_flag = True
 		msg = [+] SERVER FLAG IN server_check_sub PROCEDURE: %server_flag%
 		log(msg)
@@ -304,9 +304,8 @@ find_tree(id)
 	controlsend, , n, %id% ; name remove
 	;loop, 17
 	;	controlsend, , {RIGHT} , %id% ; just for recoginize high probability. deprecate
-	
-	
-	;find tree
+	; -> scenario... move coordinate or click move, etc...
+		
 	ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
 	if ErrorLevel != 0 
 	{
@@ -453,7 +452,7 @@ go_tree(id){
 	sleep,1000
 	
 	refresh(id)
-	if ( A_WDay = 1 || A_WDay = 7 ){ ; weekend
+	if ( A_WDay = 1 || A_WDay = 7 ){ ; 주말
 		controlsend, , uu, %id% 
 		sleep, 500
 		controlsend, , {DOWN}{DOWN}{DOWN}, %id%  
@@ -489,58 +488,6 @@ go_tree(id){
 	}
 	return False
 }
-/*
-go_tree(id)
-{
-	WinActivate, %id%
-	sleep,1000
-
-	refresh(id)
-	if ( A_WDay = 1 || A_WDay = 7 ){ ; weekend
-		controlsend, , uu, %id% 
-		sleep, 500
-		controlsend, , {DOWN}{DOWN}{DOWN}, %id%  
-		sleep, 500
-		controlsend, , {ENTER}, %id%  
-		sleep, 500
-		find_moksuNPC_result := find_moksuNPC(id)
-		if (find_moksuNPC_result){
-			sleep, 1000
-			controlsend, , {DOWN}, %id%  
-			sleep, 1000
-			controlsend, , {ENTER}, %id%  
-			sleep, 500
-			log("[+] GO TREE SUCCESS")
-			return True
-		}
-	}
-	else
-	{ ; 평일
-		controlsend, , uu, %id% 
-		sleep, 500
-		controlsend, , {DOWN}{DOWN}{DOWN}, %id%  
-		sleep, 500
-		controlsend, , {ENTER}, %id%  
-		sleep, 500
-		find_moksuNPC_result := find_moksuNPC(id)
-		if (find_moksuNPC_result){
-			sleep, 1000
-			controlsend, , {DOWN}, %id%  
-			sleep, 500
-			controlsend, , {ENTER}, %id%  
-			sleep, 500
-			log("[+] GO TREE SUCCESS")
-				return True
-			}
-			else
-				log("[-] GO TREE FAIL")
-		}
-	}
-
-	log("[-] GO TREE FAIL")
-	return False
-}
-*/
 
 clean_process(){
 	tooltip, clean_process, 0, 0
@@ -561,11 +508,11 @@ init_start(id1, id2){
 	;msgbox, , %id1%
 	ToolTip, start-winbaram, 0, 0
 	send, #m
-	start1 := start_winbaram(id1, "123123")
+	start1 := start_winbaram(id1,  id1_pw)
 	msgbox, , ,%start1%, 2
-	sleep, 5000
+	sleep, 5000 ; id1 login time?
 	WinWait, %id1%, , 60
-	start2 := start_winbaram(id2, "123123")
+	start2 := start_winbaram(id2, id2_pw)
 	WinWait, %id2%, , 60
 	start:= start1 && start2 ; AND Operation
 	return start
@@ -577,8 +524,7 @@ main(id1, id2)
 {
 	log("[+] MAIN START")
 	MouseMove, 0, 0 ; for notice button. chang the image at on focus 
-	ToolTip, start-macro, 0, 0
-	playing = true ; deprecate
+	ToolTip, start-macro, 0, 0	
 	
 	init_start_result := init_start(id1, id2)
 	msg = [+] init_start_result: %init_start_result%
@@ -636,7 +582,7 @@ main(id1, id2)
 			return False
 		}
 	}
-	msg = [-] UNEXPECTED SITUATION IN MAIN FUNCTION- %id%
+	msg = [-] UNEXPECTED TO THIS SITUATION IN MAIN FUNCTION - %id%
 	log(msg)
 	return False
 }
@@ -650,19 +596,20 @@ myip(){
 id_pw_set(){
 	ip := myip()
 	
-	if (ip = x.x.x.x){
-		id1 = 
-		id1_pw = 
-		id2 = 
-		id2_pw = 
+	if (ip = x.x.x.x){ ; lg
+		id1 = 카라
+		id1_pw = 123123
+		id2 = 끄아
+		id2_pw = 123123
+		winbaram_path =  C:\Users\ur0n2\Desktop\123.lnk
 	}
-	else if (ip = x.x.x.x){
-		id1 = 
-		id1_pw = 
-		id2 = 
-		id2_pw = 
+	else if (ip = x.x.x.x){ ;nc
+		id1 = 손나은
+		id1_pw = apfhd12
+		id2 = 윤아
+		id2_pw = apfhd12
+		winbaram_path = 
 	}
-	
 }
 
 global playing = 1
@@ -670,14 +617,16 @@ global id1
 global id1_pw
 global id2
 global id2_pw
+global winbaram_path
 
 F1:: 
 	global server_flag = False
 	global no_response_flag = False
 	global playing := playing + 1
+	
 	log_init()
 	ip := myip()
-	msg = [+] START FB MACRO [%playing% DONE]- %ip%
+	msg = [+] START TO FB MACRO [%playing% DONE]- %ip%
 	log(msg)
 	
 	msg = [+] ID / PW SETTING
@@ -687,19 +636,19 @@ F1::
 	settimer, server_check_sub, 300000 ;5m
 	;settimer, check_the_no_response, 300000 ;5m
 	log("[+] SETTIMER ON")
+	
 	while true{	
 		if (clean_process()){
 			log("[+] CLEAN PROCESS COMPLETE")			
 			if (server_flag){
 				log("[+] SERVER DISCONNECTION... ")
-				msgbox , , , server_flag and timer reset, 1
-				server_flag = False ; equally global server_flag = false
-				msg = [+] SERVER FLAG INITALIZE TO FALSE
-				log(msg)				
+				server_flag = False ; equally global server_flag = false				
+				log("[+] SERVER FLAG RESET")				
 			}	
 			else
 				log("[+] SERVER STATUS IS CLEAN") ;WINBARAM STATUS IS CLEAN
-			main_result := main("카라", "끄아") ; send 다 아디로 
+			main_result := main(id1, id2)
+			
 			if (main_result = False){
 				log("[-] MAIN RESULT IS FALSE GOTO F1");
 				goto F1
@@ -710,11 +659,12 @@ F1::
 
 F2::
 	ToolTip, end-macro, 0, 0
-	log("[+] FB MACRO END")
+	msg = [+] END TO FB MACRO [%playing% DONE]- %ip%
+	log(msg)
 	ExitApp	
 
 F3::
-	Pause
+	Pause ; suspend
 	
 F4::
 	Reload
