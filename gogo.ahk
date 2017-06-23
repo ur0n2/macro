@@ -51,30 +51,29 @@ log(sentence) {
 
 refresh(id){
 	WinActivate, %id%
-	sleep,1000
+	sleep, 500
 	
 	controlsend, ,{ESC}, %id%
 	controlsend, ,{ESC}, %id%
-	sleep, 200
+	sleep, 100
 	controlsend, ,s, %id%
 	controlsend, ,s, %id%
-	sleep, 200
+	sleep, 100
 	controlsend, ,{ctrl down}r, %id%
 	controlsend, ,{ctrl up}, %id%
-	sleep, 200
+	sleep, 100
 	controlsend, ,{ctrl down}r, %id%
 	controlsend, ,{ctrl up}, %id%
-	sleep,200
-	msg = [+] %id% SCREEN REFRESH SUCCESS
+	sleep, 100
+	msg = [+] SCREEN REFRESH SUCCESS - %id% 
 	log(msg)
 }
 
 
 set_login(id, pw){ ; id list: kara, kka, vm1, vm2 
 	WinActivate, %id%
-	sleep,1000
+	sleep,1500
 	
-	sleep, 500
 	send, %id%
 	sleep, 500
 	send, {tab}
@@ -95,14 +94,14 @@ winbaram_execution(id, pw){
 	Run, winbaram_path, , , pid1	
 	Process, priority, %pid1%, High
 	Winwait, Notice
-	winmove Notice, , A_ScreenWidth/2, 0  ; for imagesearch. because notice window is upper than any windows
+	winmove, Notice, , A_ScreenWidth/2, 0  ; for imagesearch. because notice window is upper than any windows
 	sleep, 1000
 	if (ErrorLevel != 0){
 		msg = [-] IMAGE-SEARCH ERROR FROM NOTICE - %id%
 		log(msg)
 		return False
 	}		
-	msg = [+] START logIN - %id%
+	msg = [+] START LOGIN - %id%
 	log(msg)
 	ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp
 	;ImageSearch, fx, fy, 865, 649, 1142, 739, start.bmp
@@ -139,14 +138,14 @@ winbaram_execution(id, pw){
 				WinActivate, %id%
 				sleep, 500
 				winmove, %id%, , 0, 0
-				msg = [+] %id% - LOGIN SUCCESS
+				msg = [+] LOGIN SUCCESS - %id%
 				log(msg)
 				gosub, server_check_sub ; first login and first check
 				return True				
 			}
 			else ;if errorlevel = 1
 			{
-				msg = [-] %id% - logIN3 FAIL
+				msg = [-] LOGIN3 FAIL - %id%
 				log(msg)
 				ToolTip, login3-error, 0, 0
 				return False
@@ -155,7 +154,7 @@ winbaram_execution(id, pw){
 		else ;if errorlevel = 1
 		{
 			ToolTip, login2-error, 0, 0
-			msg = [-] %id% - logIN2 FAIL
+			msg = [-] LOGIN2 FAIL - %id%
 			log(msg)
 			return False
 		}	
@@ -163,7 +162,7 @@ winbaram_execution(id, pw){
 	  else ;if errorlevel = 1
 	  {
 		ToolTip, login1-error, 0, 0
-		msg = [-] %id% - logIN1 FAIL
+		msg = [-] LOGIN1 FAIL - %id%
 		log(msg)
 		return False
 	  }
@@ -171,7 +170,7 @@ winbaram_execution(id, pw){
 	else ;if errorlevel = 1 
 	{
 		ToolTip, start-error, 0, 0
-		msg = [-] %id% - logIN START FAIL
+		msg = [-] LOGIN START FAIL - %id%
 		log(msg)
 		return False
 	}
@@ -579,27 +578,33 @@ winbaram_execution_loader(id1, id2){
 
 
 go_training_scenario(id) {
-	log("[+] GO TRAINING SCENARIO START")
+	msg = [+] GO TRAINING SCENARIO START - %id%
+	log(msg)
 	loop, 6 { ; scenario 1
 		find_training_image_status := find_training_image(id)
 		if (find_training_image_status ){
-			log("[+] FIND TRAINING IMAGE SUCCESS !")			
+			msg = [+] FIND TRAINING IMAGE SUCCESS ! - %id%
+			log(msg)		
 			return True
 		}
-		log("[-] FIND TRAINING IMAGE FAIL. RE-TRY")
+		msg = [-] FIND TRAINING IMAGE FAIL. RE-TRY ! - %id%
+		log(msg)
 	}
 	return False
 }
 
 go_tree_scenario(id) {
-	log("[+] GO TREE SCENARIO START")
+	msg = [+] GO TREE SCENARIO START - %id%
+	log(msg)
 	loop, 11 { ; scenario 1
 		find_tree_image_status := find_tree_image(id)
 		if (find_tree_image_status ){
-			log("[+] FIND TREE IMAGE SUCCESS !")
+			msg = [+] FIND TREE IMAGE SUCCESS ! - %id%
+			log(msg)
 			return True
 		}
-		log("[-] FIND TREE IMAGE FAIL. RE-TRY")		
+		msg = [-] FIND TREE IMAGE FAIL. RE-TRY ! - %id%
+		log(msg)
 	}
 	return False
 }
@@ -617,12 +622,12 @@ job_starter(id) {
 			log(msg)
 			go_tree_scenario_result := go_tree_scenario(id) ; i want to unconditional success.
 			if (go_tree_scenario_result = True) {
-				msg = [+] GO TREE SCENARIO SUCCESS
+				msg = [+] GO TREE SCENARIO SUCCESS - %id%
 				log(msg)
 				return True
 			}
 			else {
-				msg = [-] GO TREE SCENARIO FAIL
+				msg = [-] GO TREE SCENARIO FAIL - %id%
 				log(msg)
 				return False
 			}
@@ -642,12 +647,12 @@ job_starter(id) {
 			log(msg)
 			go_training_scenario(id) ; i want to unconditional success.
 			if (go_training_scenario_result = True) {
-				msg = [+] GO TRAINING SCENARIO SUCCESS
+				msg = [+] GO TRAINING SCENARIO SUCCESS - %id%
 				log(msg)
 				return True
 			}
 			else {
-				msg = [-] GO TRAINING SCENARIO FAIL
+				msg = [-] GO TRAINING SCENARIO FAIL - %id%
 				log(msg)
 				return False
 			}
@@ -748,7 +753,7 @@ F1::
 	
 	log_init()
 	ip := myip()
-	msg = [+] START TO FB MACRO [%playing% DONE]- %ip%
+	msg = [+] START FB MACRO [%playing% DONE] - %ip%
 	log(msg)
 	
 	id_pw_set()
