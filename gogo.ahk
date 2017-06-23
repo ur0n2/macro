@@ -109,8 +109,9 @@ start_winbaram(id, pw){
 
 	if errorlevel = 0
 	{
-		mousemove, fx+25, fy+25
+		;mousemove, fx+25, fy+25
 		mouseclick left, fx+25, fy+25, 2
+		mousemove, 10, 10 ; stabilized for difference to the resolution.
 		sleep, 5000 ;3000
 		  
 		  
@@ -118,8 +119,9 @@ start_winbaram(id, pw){
 		if errorlevel = 0
 		{
 		ToolTip, login1-sucess, 0, 0
-		mousemove, fx+11, fy+11
+		;mousemove, fx+11, fy+11
 		mouseclick left, fx+11, fy+11, 2
+		mousemove, 10, 10 		
 		sleep, 2000
 		ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, login2.bmp
 		if errorlevel = 0
@@ -325,6 +327,7 @@ find_tree(id)
 	if errorlevel = 0
 	{
 		mouseclick, left, fx+27, fy+40, 1
+		mousemove, 10, 10 		
 		sleep, 5000 ; go to the tree
 		
 		semicolon_check(id)
@@ -387,6 +390,7 @@ find_training(id){ ; up, down, left, right of character semicolon check
 	if errorlevel = 0
 	{
 		mouseclick, left, fx+5, fy+25, 1
+		mousemove, 10, 10 
 		sleep, 5000 ; move time
 		
 		semicolon_check(id)
@@ -437,6 +441,7 @@ find_moksuNPC(id){
 	if errorlevel = 0 
 	{
 		mouseclick, left, fx+5, fy+5, 3
+		mousemove, 10, 10 
 		msg = [+] FIND MOKSU-NPC SUCCESS - %id%
 		log(msg)
 		return True
