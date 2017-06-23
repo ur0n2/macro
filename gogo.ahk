@@ -87,7 +87,7 @@ set_login(id, pw){ ; id list: kara, kka, vm1, vm2
 }
 
 
-start_winbaram(id, pw){
+winbaram_execution(id, pw){
 	msg = [+] START WINBARAM.EXE - %id%
 	log(msg)
 	ToolTip, %id% gogo, 0, 0 
@@ -175,7 +175,7 @@ start_winbaram(id, pw){
 		log(msg)
 		return False
 	}
-	msg = [-] UNEXPECTED SITUATION IN START_WINBARAM FUNCTION- %id%
+	msg = [-] UNEXPECTED SITUATION IN WINBARAM_EXECUTION FUNCTION- %id%
 	log(msg)
 	return False
 }
@@ -260,7 +260,7 @@ hit(id1, id2){
 }
 
 
-go_training(id){
+move_training_map(id){
 	WinActivate, %id%
 	sleep,1000
 	refresh(id)
@@ -296,10 +296,10 @@ go_training(id){
 }
 
 
-find_tree(id)
+find_tree_image(id)
 {
 	;mousemove, 0, 0
-	msg = [+] FIND TREE START - %id%
+	msg = [+] FIND TREE IMAGE START - %id%
 	log(msg)
 	WinActivate, %id%
 	sleep,1000
@@ -315,73 +315,96 @@ find_tree(id)
 		if ErrorLevel != 0 
 		{
 			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
-			if ErrorLevl != 0 
-			{
+			if ErrorLevel != 0 
+			{						
+				msg = [+] FIND TREE IMAGE IS FAIL - %id%
+				log(msg)
 				return False
 			}
 		}
 	}
 	
-	
+	; 위아래양옆, corr$.bmp로 반복문 가능 
 	;after find tree sucess
 	if errorlevel = 0
 	{
+		msg = [+] FIND TREE IMAGE SUCCESS - %id%
+		log(msg)
 		mouseclick, left, fx+27, fy+40, 1
 		mousemove, 10, 10 		
 		sleep, 5000 ; go to the tree
 		
 		semicolon_check(id)
-				
+		
 		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, corr2.bmp		
 		if errorlevel = 0
 		{
+			msg = [+] TREE IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
+			log(msg)
 			return True
 		}
 		else
 		{
 			controlsend , , {DOWN}, %id% 
-			semicolon_check(id)
-		
+			semicolon_check(id)		
 			ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
-			if errorlevel = 0
+			if errorlevel = 0 {					
+				msg = [+] TREE IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
+				log(msg)
 				return True
+			}
 			else
 			{
 				controlsend , , {LEFT}, %id% 
 				semicolon_check(id)
 				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
-				if errorlevel = 0
+				if errorlevel = 0 {					
+					msg = [+] TREE IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
+					log(msg)
 					return True
+				}
 				else
 				{
 					controlsend , , {UP}, %id% 
 					semicolon_check(id)
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
-					if errorlevel = 0
+					if errorlevel = 0 {					
+						msg = [+] TREE IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
+						log(msg)
 						return True
+					}
 					else
 					{
 						controlsend , , {RIGHT}, %id% 
 						semicolon_check(id)
+						ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
+						if errorlevel = 0 {					
+							msg = [+] TREE IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
+							log(msg)
+							return True
+						}
+						else {
+							msg = [-] TREE IN FRONT OF U FAIL BY SEMICOLON CHECK - %id%
+							log(msg)
+							return False
+						}
 					}
-					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
-					if errorlevel = 0
-						return True
-					else
-						return False
 				}
 			}
 		}
 	}	
-	else
+	else {	
+		msg = [+] FIND TREE IMAGE IS FAIL - %id%
+		log(msg)
 		return False
+	}
 }
 
 
 
-find_training(id){ ; up, down, left, right of character semicolon check
+find_training_image(id){ ; up, down, left, right of character semicolon check
 	;mousemove, 0, 0 ; no interrupt to imagesearch
-	msg = [+] FIND TRAINING START - %id%
+	msg = [+] FIND TRAINING IMAGE START - %id%
 	log(msg)
 	WinActivate, %id%
 	sleep,1000
@@ -389,48 +412,71 @@ find_training(id){ ; up, down, left, right of character semicolon check
 	ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *20 training.bmp
 	if errorlevel = 0
 	{
+		msg = [+] FIND TRAINING IMAGE SUCCESS - %id%
+		log(msg)
 		mouseclick, left, fx+5, fy+25, 1
 		mousemove, 10, 10 
 		sleep, 5000 ; move time
 		
 		semicolon_check(id)
 		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp ; training name list in status window
-		if errorlevel = 0
+		if errorlevel = 0 {
+			msg = [+] TRAINING IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
+			log(msg)
 			return True
+		}
 		else{
 			controlsend , , {DOWN}, %id% 
 			semicolon_check(id)
 		
 			ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
-			if errorlevel = 0
+			if errorlevel = 0 {
+				msg = [+] TRAINING IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
+				log(msg)
 				return True
+			}
 			else{
 				controlsend , , {LEFT}, %id% 
 				semicolon_check(id)
 				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
-				if errorlevel = 0
+				if errorlevel = 0 {
+					msg = [+] TRAINING IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
+					log(msg)
 					return True
+				}
 				else{
 					controlsend , , {UP}, %id% 
 					semicolon_check(id)
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
-					if errorlevel = 0
+					if errorlevel = 0 {
+						msg = [+] TRAINING IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
+						log(msg)
 						return True
+					}
 					else{
 						controlsend , , {RIGHT}, %id% 
 						semicolon_check(id)
 					}
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
-					if errorlevel = 0
+					if errorlevel = 0 {
+						msg = [+] TRAINING IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
+						log(msg)
 						return True
-					else
+					}
+					else {
+						msg = [-] TRAINING IN FRONT OF U FAIL BY SEMICOLON CHECK - %id%
+						log(msg)
 						return False
+					}
 				}
 			}
 		}
 	}	
-	else
+	else	{
+		msg = [+] FIND TRAINING IMAGE IS FAIL - %id%
+		log(msg)
 		return False
+	}
 }
 
 find_moksuNPC(id){
@@ -451,8 +497,7 @@ find_moksuNPC(id){
 	return False
 }
 
-
-go_tree(id){
+move_tree_map(id){
 	WinActivate, %id%
 	sleep,1000
 	
@@ -508,19 +553,85 @@ clean_process(){
 }
 
 
-init_start(id1, id2){ 
-	log("[+] INIT START")
+winbaram_execution_loader(id1, id2){ 
+	log("[+] WINBARAM EXEUCTION LOADER START")
 	;msgbox, , %id1%
 	ToolTip, start-winbaram, 0, 0
 	send, #m
-	start1 := start_winbaram(id1,  id1_pw)
-	msgbox, , ,%start1%, 2
+	
+	winbaram_execution_result1 := winbaram_execution(id1,  id1_pw)
+	msgbox, , ,%winbaram_execution_result1%, 2
 	sleep, 5000 ; id1 login time?
 	WinWait, %id1%, , 60
-	start2 := start_winbaram(id2, id2_pw)
+	
+	winbaram_execution_result2 := winbaram_execution(id2, id2_pw)
 	WinWait, %id2%, , 60
-	start:= start1 && start2 ; AND Operation
-	return start
+	
+	winbaram_execution_result := winbaram_execution_result1 && winbaram_execution_result2; AND Operation
+	return winbaram_execution_result
+}
+
+
+go_training_scenario() {
+	log("[+] GO TRAINING SCENARIO START")
+	loop, 6 { ; scenario 1
+		find_training_image_status := find_training_image(id1)
+		if (find_training_image_status ){
+			log("[+] FIND TRAINING IMAGE SUCCESS !")
+			break
+		}
+		log("[-] FIND TRAINING IMAGE FAIL. RE-TRY")
+		training_scenario_status := move_training_map(id1)
+	}
+}
+
+go_tree_scenario() {
+	log("[+] GO TREE SCENARIO START")
+	loop, 11 { ; scenario 1
+		find_tree_image_status := find_tree_image(id2)
+		if (find_tree_image_status ){
+			log("[+] FIND TREE IMAGE SUCCESS !")
+			break
+		}
+		log("[-] FIND TREE IMAGE FAIL. RE-TRY")
+		go_tree_status := go_tree(id2)
+	}
+}
+
+job_starter(id) {
+	msg = [+] JOB START - %id%
+	log(msg)
+	
+	if  (id_job = tree) {
+		move_tree_map_status := move_tree_map(id)
+		msg = [+] MOVE TREE MAP - %id%
+		log(msg)
+		if (move_tree_map_status) {
+			msg = [+] go_tree_scenario - %id%
+			log(msg)
+			go_tree_scenario(id) ; i want to unconditional success.
+		}
+		else {
+			msg = [-] MOVE TREE MAP STATUS IS FALSE - %id%
+			log(msg)
+			return False
+		}
+	}
+	else { ;(id_job = training)
+		move_training_map_status := move_training_map(id)
+		msg = [+] MOVE TRAINING MAP - %id%
+		log(msg)
+		if (move_training_map_status) {
+			msg = [+] go_training_scenario - %id%
+			log(msg)
+			go_training_scenario(id) ; i want to unconditional success.
+		}
+		else {
+			msg = [-] MOVE TRAINING MAP STATUS IS FALSE - %id%
+			log(msg)
+			return False
+		}
+	}
 }
 
 
@@ -531,48 +642,23 @@ main(id1, id2)
 	MouseMove, 0, 0 ; for notice button. chang the image at on focus 
 	ToolTip, start-macro, 0, 0	
 	
-	init_start_result := init_start(id1, id2)
-	msg = [+] init_start_result: %init_start_result%
+	winbaram_execution_loader_result := winbaram_execution_loader(id1, id2)
+	msg = [+] winbaram_execution_loader_result: %winbaram_execution_loader_result%
 	log(msg)
 	
-	if ( init_start_result = False ){
-		log("[-] INIT START ERROR")
-		ToolTip, start_winbaram-error, 0, 0
+	if ( winbaram_execution_loader_result = False ){
+		log("[-] WINBARAM EXEUCTION LOADER ERROR")
+		ToolTip, winbaram_execution_loader error, 0, 0
 		return False ;clean()
 	}
-	else if ( init_start_result = True ){
-		log("[+] START WINBARAM SUCCESS")
-		ToolTip, start_winbaram-success, 0, 0
-		go_training_status := go_training(id1)
-		log("[+] GO TRAINING")
-		go_tree_status := go_tree(id2)
-		log("[+] GO TREE")
-		if (go_training_status is True ){	
-			log("[+] GO TRAINING SCENARIO START")
-			loop, 6 { ; scenario 1
-				find_training_status := find_training(id1)
-				if (find_training_status ){
-					log("[+] FIND TRAINING SUCCESS !")
-					break
-				}
-				log("[-] FIND TRAINING FAIL RE-TRY")
-				go_training_status := go_training(id1)
-			}
-		}
+	else if ( winbaram_execution_loader_result = True ){
+		log("[+] WINBARAM EXECUTION LOADER SUCCESS")
+		ToolTip, winbaram_execution_loader success, 0, 0
 		
-		if (go_tree_status is True){
-			log("[+] GO TREE SCENARIO START")
-			loop, 11 { ; scenario 1
-				find_tree_status := find_tree(id2)
-				if (find_tree_status ){
-					log("[+] FIND TREE SUCCESS !")
-					break
-				}
-				log("[-] FIND TREE FAIL RE-TRY")
-				go_tree_status := go_tree(id2)
-			}
-		}
-		if ( find_training_status && find_tree_status) {
+		job_starter_id1_result := job_starter(id1)
+		job_starter_id2_result := job_starter(id2)
+		
+		if ( job_starter_id1_result && job_starter_id2_result) {
 			while True{
 				log("[+] HIT START")
 				hit_result := hit(id1,id2)
@@ -587,12 +673,10 @@ main(id1, id2)
 			return False
 		}
 	}
-	msg = [-] UNEXPECTED TO THIS SITUATION IN MAIN FUNCTION - %id%
-	log(msg)
-	return False
 }
 
 myip(){
+	log("[+] GET MY IP")
 	ip = %A_IPAddress1%
 	return ip
 }
@@ -604,15 +688,19 @@ id_pw_set(){
 	if (ip = x.x.x.x){ ; lg
 		id1 = 카라
 		id1_pw = 123123
+		id1_job = training
 		id2 = 끄아
 		id2_pw = 123123
+		id2_job = tree
 		winbaram_path =  C:\Users\ur0n2\Desktop\123.lnk
 	}
 	else if (ip = x.x.x.x){ ;nc
 		id1 = 손나은
 		id1_pw = apfhd12
+		id1_job = tree
 		id2 = 윤아
 		id2_pw = apfhd12
+		id2_job = tree
 		winbaram_path = 
 	}
 }
@@ -620,8 +708,10 @@ id_pw_set(){
 global playing = 1
 global id1
 global id1_pw
+global id1_job
 global id2
 global id2_pw
+global id2_job
 global winbaram_path
 
 F1:: 
