@@ -298,7 +298,6 @@ move_training_map(id){
 
 find_tree_image(id)
 {
-	;mousemove, 0, 0
 	msg = [+] FIND TREE IMAGE START - %id%
 	log(msg)
 	WinActivate, %id%
@@ -307,7 +306,7 @@ find_tree_image(id)
 	;loop, 17
 	;	controlsend, , {RIGHT} , %id% ; just for recoginize high probability. deprecate
 	; -> scenario... move coordinate or click move, etc...
-		
+	
 	ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
 	if ErrorLevel != 0 
 	{
@@ -326,18 +325,16 @@ find_tree_image(id)
 	
 	; 위아래양옆, corr$.bmp로 반복문 가능 
 	;after find tree sucess
-	if errorlevel = 0
-	{
+	if (errorlevel = 0) {
 		msg = [+] FIND TREE IMAGE SUCCESS - %id%
 		log(msg)
 		mouseclick, left, fx+27, fy+40, 1
 		mousemove, 10, 10 		
 		sleep, 5000 ; go to the tree
 		
-		semicolon_check(id)
-		
+		semicolon_check(id)		
 		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, corr2.bmp		
-		if errorlevel = 0
+		if errorlevel = 0 
 		{
 			msg = [+] TREE IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
 			log(msg)
@@ -348,7 +345,8 @@ find_tree_image(id)
 			controlsend , , {DOWN}, %id% 
 			semicolon_check(id)		
 			ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
-			if errorlevel = 0 {					
+			if errorlevel = 0 
+			{					
 				msg = [+] TREE IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
 				log(msg)
 				return True
@@ -358,7 +356,8 @@ find_tree_image(id)
 				controlsend , , {LEFT}, %id% 
 				semicolon_check(id)
 				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
-				if errorlevel = 0 {					
+				if errorlevel = 0 
+				{					
 					msg = [+] TREE IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
 					log(msg)
 					return True
@@ -368,7 +367,8 @@ find_tree_image(id)
 					controlsend , , {UP}, %id% 
 					semicolon_check(id)
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
-					if errorlevel = 0 {					
+					if errorlevel = 0 
+					{					
 						msg = [+] TREE IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
 						log(msg)
 						return True
@@ -378,7 +378,8 @@ find_tree_image(id)
 						controlsend , , {RIGHT}, %id% 
 						semicolon_check(id)
 						ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr2.bmp
-						if errorlevel = 0 {					
+						if errorlevel = 0 
+						{					
 							msg = [+] TREE IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
 							log(msg)
 							return True
@@ -420,7 +421,8 @@ find_training_image(id){ ; up, down, left, right of character semicolon check
 		
 		semicolon_check(id)
 		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp ; training name list in status window
-		if errorlevel = 0 {
+		if errorlevel = 0 
+		{
 			msg = [+] TRAINING IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
 			log(msg)
 			return True
@@ -430,7 +432,8 @@ find_training_image(id){ ; up, down, left, right of character semicolon check
 			semicolon_check(id)
 		
 			ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
-			if errorlevel = 0 {
+			if errorlevel = 0 
+			{
 				msg = [+] TRAINING IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
 				log(msg)
 				return True
@@ -439,7 +442,8 @@ find_training_image(id){ ; up, down, left, right of character semicolon check
 				controlsend , , {LEFT}, %id% 
 				semicolon_check(id)
 				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
-				if errorlevel = 0 {
+				if errorlevel = 0 
+				{
 					msg = [+] TRAINING IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
 					log(msg)
 					return True
@@ -448,7 +452,8 @@ find_training_image(id){ ; up, down, left, right of character semicolon check
 					controlsend , , {UP}, %id% 
 					semicolon_check(id)
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
-					if errorlevel = 0 {
+					if errorlevel = 0 
+					{
 						msg = [+] TRAINING IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
 						log(msg)
 						return True
@@ -458,7 +463,8 @@ find_training_image(id){ ; up, down, left, right of character semicolon check
 						semicolon_check(id)
 					}
 					ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight,  corr1.bmp
-					if errorlevel = 0 {
+					if errorlevel = 0 
+					{
 						msg = [+] TRAINING IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
 						log(msg)
 						return True
@@ -567,35 +573,35 @@ winbaram_execution_loader(id1, id2){
 	winbaram_execution_result2 := winbaram_execution(id2, id2_pw)
 	WinWait, %id2%, , 60
 	
-	winbaram_execution_result := winbaram_execution_result1 && winbaram_execution_result2; AND Operation
+	winbaram_execution_result := winbaram_execution_result1 && winbaram_execution_result2 ; AND Operation
 	return winbaram_execution_result
 }
 
 
-go_training_scenario() {
+go_training_scenario(id) {
 	log("[+] GO TRAINING SCENARIO START")
 	loop, 6 { ; scenario 1
-		find_training_image_status := find_training_image(id1)
+		find_training_image_status := find_training_image(id)
 		if (find_training_image_status ){
-			log("[+] FIND TRAINING IMAGE SUCCESS !")
-			break
+			log("[+] FIND TRAINING IMAGE SUCCESS !")			
+			return True
 		}
 		log("[-] FIND TRAINING IMAGE FAIL. RE-TRY")
-		training_scenario_status := move_training_map(id1)
 	}
+	return False
 }
 
-go_tree_scenario() {
+go_tree_scenario(id) {
 	log("[+] GO TREE SCENARIO START")
 	loop, 11 { ; scenario 1
-		find_tree_image_status := find_tree_image(id2)
+		find_tree_image_status := find_tree_image(id)
 		if (find_tree_image_status ){
 			log("[+] FIND TREE IMAGE SUCCESS !")
-			break
+			return True
 		}
-		log("[-] FIND TREE IMAGE FAIL. RE-TRY")
-		go_tree_status := go_tree(id2)
+		log("[-] FIND TREE IMAGE FAIL. RE-TRY")		
 	}
+	return False
 }
 
 job_starter(id) {
@@ -607,9 +613,19 @@ job_starter(id) {
 		msg = [+] MOVE TREE MAP - %id%
 		log(msg)
 		if (move_tree_map_status) {
-			msg = [+] go_tree_scenario - %id%
+			msg = [+] GO TREE SCENARIO - %id%
 			log(msg)
-			go_tree_scenario(id) ; i want to unconditional success.
+			go_tree_scenario_result := go_tree_scenario(id) ; i want to unconditional success.
+			if (go_tree_scenario_result = True) {
+				msg = [+] GO TREE SCENARIO SUCCESS
+				log(msg)
+				return True
+			}
+			else {
+				msg = [-] GO TREE SCENARIO FAIL
+				log(msg)
+				return False
+			}
 		}
 		else {
 			msg = [-] MOVE TREE MAP STATUS IS FALSE - %id%
@@ -621,10 +637,20 @@ job_starter(id) {
 		move_training_map_status := move_training_map(id)
 		msg = [+] MOVE TRAINING MAP - %id%
 		log(msg)
-		if (move_training_map_status) {
-			msg = [+] go_training_scenario - %id%
+		if (move_training_map_status = True) {
+			msg = [+] GO TRAINING SCENARIO - %id%
 			log(msg)
 			go_training_scenario(id) ; i want to unconditional success.
+			if (go_training_scenario_result = True) {
+				msg = [+] GO TRAINING SCENARIO SUCCESS
+				log(msg)
+				return True
+			}
+			else {
+				msg = [-] GO TRAINING SCENARIO FAIL
+				log(msg)
+				return False
+			}
 		}
 		else {
 			msg = [-] MOVE TRAINING MAP STATUS IS FALSE - %id%
@@ -659,14 +685,15 @@ main(id1, id2)
 		job_starter_id2_result := job_starter(id2)
 		
 		if ( job_starter_id1_result && job_starter_id2_result) {
-			while True{
-				log("[+] HIT START")
-				hit_result := hit(id1,id2)
-				if (hit_result is False){
-					log("[-] HIT ERROR")
-					return False
-				}
+			;while True{ ; 있어야 하나?  
+			;infinite loop in hit 
+			log("[+] HIT START")
+			hit_result := hit(id1,id2)
+			if (hit_result = False){
+				log("[-] HIT ERROR") ; do not raise this case
+				return False
 			}
+			;}
 		}
 		else{
 			log("[+] MAIN ERROR")
@@ -701,7 +728,7 @@ id_pw_set(){
 		id2 = 윤아
 		id2_pw = apfhd12
 		id2_job = tree
-		winbaram_path = 
+		winbaram_path = C:\Users\ur0n2\Desktop\123.lnk
 	}
 }
 
@@ -724,12 +751,12 @@ F1::
 	msg = [+] START TO FB MACRO [%playing% DONE]- %ip%
 	log(msg)
 	
+	id_pw_set()
 	msg = [+] ID / PW SETTING
 	log(msg)
 	
 	log("[+] START SETTIMER FOR SERVER STATUS")	
-	settimer, server_check_sub, 300000 ;5m
-	;settimer, check_the_no_response, 300000 ;5m
+	settimer, server_check_sub, 300000 ; 5 minutes
 	log("[+] SETTIMER ON")
 	
 	while true{	
@@ -742,10 +769,11 @@ F1::
 			}	
 			else
 				log("[+] SERVER STATUS IS CLEAN") ;WINBARAM STATUS IS CLEAN
+
 			main_result := main(id1, id2)
 			
 			if (main_result = False){
-				log("[-] MAIN RESULT IS FALSE GOTO F1");
+				log("[-] MAIN RESULT IS FALSE GOTO F1")
 				goto F1
 			}
 		}		
