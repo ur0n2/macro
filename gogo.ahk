@@ -209,10 +209,19 @@ server_reconn_check(id){
 		log(msg)		
 		return True
 	}
+	
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, no_response.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10  ;msgbox, , , findit!
 		msg = [-] WINBARAM.EXE NO RESPONSE IMAGE FINDED - %id%
+		log(msg)		
+		return True
+	}
+	
+	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, nonmsgbox.bmp
+	if (errorlevel = 0) {
+		tooltip, server_reconnection, 10, 10  ;msgbox, , , findit!
+		msg = [-] WINBARAM.EXE NON MSGBOX IMAGE FINDED - %id%
 		log(msg)		
 		return True
 	}
