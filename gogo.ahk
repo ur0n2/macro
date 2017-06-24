@@ -1,4 +1,12 @@
 #Persistent
+global playing = 0
+global id1
+global id1_pw
+global id1_job
+global id2
+global id2_pw
+global id2_job
+global winbaram_path 
 
 log_files_count(Directory)
 {			
@@ -7,7 +15,7 @@ log_files_count(Directory)
 	{
 		log_count := log_count + 1 
 	}
-	return log_count-1
+	return log_count
 }
 
 log_init() {
@@ -15,33 +23,33 @@ log_init() {
 	FileCreateDir, log
 	log_dir_path  = .\\log ; relative path
 	log_count := log_files_count(log_dir_path)
-	msgbox, , , log file count: %log_count%, 1
-	if (log_count <= 0){		
-		last_log_file = %log_dir_path%\\log%log_count%.txt ;.\\log\\log{n}.txt
+	
+	;msgbox, , , log file count: %log_count% , 1
+	if (log_count = 0){		
+		log_dir = %log_dir_path%\\log1.txt ;.\\log\\log{n}.txt
+		return 
 	}
 	else {
 		;log files counting for last log file to append.
+		;log_num := log_count +1
 		last_log_file = %log_dir_path%\\log%log_count%.txt ;.\\log\\log{n}.txt
-		msgbox, , , last log file: %last_log_file%, 1
-	}
-	;get last log file size
-	FileGetSize, last_log_file_size, %last_log_file%, K
-	if (!last_log_file_size) { ; first log file create
-		last_log_file = %log_dir_path%\\log1.txt 		
-	}
-	msgbox, , , last log file size: %last_log_file_size%, 1
+		;msgbox, , , last log file: %last_log_file%, 1
+		
+		;get last log file size
+		FileGetSize, last_log_file_size, %last_log_file% ; Byte
+		;msgbox, , , last log file size: %last_log_file_size%, 1
 
-
-	;last log file size check. and log_dir variable set
-	if (last_log_file_size >= 400) { ; if above 400KB then, create to new last log file
-		num := log_count +1	
-		log_dir = log\log%num%.txt	
+		;last log file size check. and log_dir variable set
+		if (last_log_file_size >= 102400) { ; if above 100KB then, create to new last log file
+			num := log_count+1
+			log_dir = log\log%num%.txt	
+		}
+		else { ; if <100KB then, maintain present log file
+			num := log_count
+			log_dir = log\log%num%.txt
+			;msgbox, , , %log_dir%, 1
+		}
 	}
-	else { ; if <400KB then, maintain present log file
-		log_dir = log\log%log_count%.txt
-		;msgbox, , , %log_dir%
-	}
-	
 }
 
 log(sentence) {
@@ -91,7 +99,7 @@ winbaram_execution(id, pw){
 	log(msg)
 	ToolTip, %id% gogo, 0, 0 
 	sleep, 200
-	Run, winbaram_path, , , pid1	
+	Run, %winbaram_path%, , , pid1	
 	Process, priority, %pid1%, High
 	Winwait, Notice
 	winmove, Notice, , A_ScreenWidth/2, 0  ; for imagesearch. because notice window is upper than any windows
@@ -204,7 +212,7 @@ server_reconn_check(id){
 	sleep,1000
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, reconn.bmp
 	if (errorlevel = 0) {
-		tooltip, server_reconnection, 10, 10  ;msgbox, , , findit!
+		tooltip, server_reconnection, 10, 10 
 		msg = [-] SERVER DISCONNECDTION IMAGE FINDED - %id%
 		log(msg)		
 		return True
@@ -212,7 +220,7 @@ server_reconn_check(id){
 	
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, no_response.bmp
 	if (errorlevel = 0) {
-		tooltip, server_reconnection, 10, 10  ;msgbox, , , findit!
+		tooltip, server_reconnection, 10, 10 
 		msg = [-] WINBARAM.EXE NO RESPONSE IMAGE FINDED - %id%
 		log(msg)		
 		return True
@@ -220,7 +228,7 @@ server_reconn_check(id){
 	
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, nonmsgbox.bmp
 	if (errorlevel = 0) {
-		tooltip, server_reconnection, 10, 10  ;msgbox, , , findit!
+		tooltip, server_reconnection, 10, 10 
 		msg = [-] WINBARAM.EXE NON MSGBOX IMAGE FINDED - %id%
 		log(msg)		
 		return True
@@ -278,8 +286,6 @@ move_training_map(id){
 		controlsend, , {up}{up}{ENTER}, %id%
 		sleep, 500
 		controlsend, , {RIGHT}{ENTER}, %id%
-		sleep, 500
-		ControlSend, , {RIGHT}{ENTER}, %id%
 		sleep, 500
 		msg = [+] GO TRAINING SUCCESS - %id%
 		log(msg)
@@ -555,7 +561,7 @@ move_tree_map(id){
 
 clean_process(){
 	tooltip, clean_process, 0, 0
-	loop, 20{
+	loop, 10{
 		process, close, winbaram.exe
 		sleep, 500
 	}
@@ -563,7 +569,7 @@ clean_process(){
 	send, #m
 	
 	log("[+] CLEAN PROCESS COMPLETE")
-	return True
+	;return True
 }
 
 
@@ -574,7 +580,6 @@ winbaram_execution_loader(id1, id2){
 	send, #m
 	
 	winbaram_execution_result1 := winbaram_execution(id1,  id1_pw)
-	msgbox, , ,%winbaram_execution_result1%, 2
 	sleep, 5000 ; id1 login time?
 	WinWait, %id1%, , 60
 	
@@ -604,32 +609,31 @@ go_training_scenario(id) {
 
 go_tree_scenario(id) {
 	msg = [+] GO TREE SCENARIO START - %id%
-	log(msg)
-	loop, 11 { ; scenario 1
-		find_tree_image_status := find_tree_image(id)
-		if (find_tree_image_status ){
-			msg = [+] FIND TREE IMAGE SUCCESS ! - %id%
-			log(msg)
-			return True
-		}
-		msg = [-] FIND TREE IMAGE FAIL. RE-TRY ! - %id%
+log(msg)
+	find_tree_image_status := find_tree_image(id)
+	if (find_tree_image_status ){
+		msg = [+] FIND TREE IMAGE SUCCESS ! - %id%
 		log(msg)
+		return True
 	}
+	msg = [-] FIND TREE IMAGE FAIL. RE-TRY ! - %id%
+	log(msg)
 	return False
 }
 
-job_starter(id) {
-	msg = [+] JOB START - %id%
+job_starter(id, job) {
+	msg = [+] JOB START - %id%, %job%
 	log(msg)
 	
-	if  (id_job = tree) {
+	if  (job = "tree") {
 		move_tree_map_status := move_tree_map(id)
 		msg = [+] MOVE TREE MAP - %id%
 		log(msg)
 		if (move_tree_map_status) {
 			msg = [+] GO TREE SCENARIO - %id%
 			log(msg)
-			go_tree_scenario_result := go_tree_scenario(id) ; i want to unconditional success.
+			loop, 11
+				go_tree_scenario_result := go_tree_scenario(id) ; i want to unconditional success.
 			if (go_tree_scenario_result = True) {
 				msg = [+] GO TREE SCENARIO SUCCESS - %id%
 				log(msg)
@@ -647,7 +651,7 @@ job_starter(id) {
 			return False
 		}
 	}
-	else { ;(id_job = training)
+	else { ;(job = training)
 		move_training_map_status := move_training_map(id)
 		msg = [+] MOVE TRAINING MAP - %id%
 		log(msg)
@@ -675,28 +679,30 @@ job_starter(id) {
 }
 
 
-;main
-main(id1, id2)
+login(id1, id2)
 {
-	log("[+] MAIN START")
+	log("[+] LOGIN  START")
 	MouseMove, 0, 0 ; for notice button. chang the image at on focus 
-	ToolTip, start-macro, 0, 0	
+	ToolTip, login-start, 0, 0	
 	
 	winbaram_execution_loader_result := winbaram_execution_loader(id1, id2)
-	msg = [+] winbaram_execution_loader_result: %winbaram_execution_loader_result%
-	log(msg)
 	
 	if ( winbaram_execution_loader_result = False ){
 		log("[-] WINBARAM EXEUCTION LOADER ERROR")
 		ToolTip, winbaram_execution_loader error, 0, 0
-		return False ;clean()
+		log("[-] LOGIN ERROR")
+		return False
 	}
 	else if ( winbaram_execution_loader_result = True ){
 		log("[+] WINBARAM EXECUTION LOADER SUCCESS")
 		ToolTip, winbaram_execution_loader success, 0, 0
+		log("[+] LOGIN PASS")
+		return True
 		
-		job_starter_id1_result := job_starter(id1)
-		job_starter_id2_result := job_starter(id2)
+	}
+		/*
+		job_starter_id1_result := job_starter(id1, id1_job)
+		job_starter_id2_result := job_starter(id2, id2_job)
 		
 		if ( job_starter_id1_result && job_starter_id2_result) {
 			;while True{ ; 있어야 하나?  
@@ -709,15 +715,11 @@ main(id1, id2)
 			}
 			;}
 		}
-		else{
-			log("[+] MAIN ERROR")
-			return False
-		}
-	}
+		*/
 }
 
 myip(){
-	log("[+] GET MY IP")
+	;log("[+] GET MY IP")
 	ip = %A_IPAddress1%
 	return ip
 }
@@ -726,7 +728,7 @@ myip(){
 id_pw_set(){
 	ip := myip()
 	
-	if (ip = x.x.x.x){ ; lg
+	if (ip = "192.168.57.5"){ ; lg
 		id1 = 카라
 		id1_pw = 123123
 		id1_job = training
@@ -735,7 +737,7 @@ id_pw_set(){
 		id2_job = tree
 		winbaram_path =  C:\Users\ur0n2\Desktop\123.lnk
 	}
-	else if (ip = x.x.x.x){ ;nc
+	else if (ip =  "203.250.148.136") { ;136vm
 		id1 = 손나은
 		id1_pw = apfhd12
 		id1_job = tree
@@ -744,25 +746,92 @@ id_pw_set(){
 		id2_job = tree
 		winbaram_path = C:\Users\ur0n2\Desktop\123.lnk
 	}
+	else {
+		msg = [-] IP NOT FIND, ExitApp 
+		log(msg)
+		ExitApp
+	}
+		
 }
 
-global playing = 1
-global id1
-global id1_pw
-global id1_job
-global id2
-global id2_pw
-global id2_job
-global winbaram_path
 
 F1:: 
+	global server_flag = False
+	global no_response_flag = False
+	global playing  := playing + 1
+	
+	log_init()
+	ip := myip()
+	
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############# [F1 LOGIN TEST] #############
+	log(msg)
+	msg = ########################################
+	log(msg)
+	
+	
+	msg = [+] START FB MACRO [%playing% DONE] - %ip%
+	log(msg)
+	
+	id_pw_set()
+	msg = [+] ID / PW SETTING
+	log(msg)
+	
+	clean_process()
+	msg = [+] CLEAN PROCESS COMPLETE
+	log(msg)			
+	
+	;log("[+] START SETTIMER FOR SERVER STATUS")	
+	;settimer, server_check_sub, 90000 ; 90 second
+	;log("[+] SETTIMER ON")
+	
+	if (server_flag){
+		log("[+] SERVER DISCONNECTION... ")
+		server_flag = False ; equally global server_flag = false				
+		log("[+] SERVER FLAG RESET")				
+	}	
+	else {
+		log("[+] SERVER STATUS IS CLEAN") ;WINBARAM STATUS IS CLEAN
+		login_result := login(id1, id2)		
+		if (login_result = False) {
+			log("[-] LOGIN FAIL")
+			; goto restart
+		}
+	}
+	ExitApp
+	
+	;settimer, server_check_sub, OFF  
+	
+F2::
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############## [F2 HIT TEST] ##############
+	log(msg)
+	msg = ########################################
+	log(msg)
+
+F3::
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############ [F3 LOGIN & HIT] #############
+	log(msg)
+	msg = ########################################
+	log(msg)
 	global server_flag = False
 	global no_response_flag = False
 	global playing := playing + 1
 	
 	log_init()
 	ip := myip()
-	msg = [+] START FB MACRO [%playing% DONE] - %ip%
+	
+	msg = [+] START FB MACRO [%playing% DONE] - %ip%`n
 	log(msg)
 	
 	id_pw_set()
@@ -784,28 +853,39 @@ F1::
 			else
 				log("[+] SERVER STATUS IS CLEAN") ;WINBARAM STATUS IS CLEAN
 
-			main_result := main(id1, id2)
+			login_result := login(id1, id2)
 			
-			if (main_result = False){
+			if (login_result = False){
 				log("[-] MAIN RESULT IS FALSE GOTO F1")
 				goto F1
 			}
 		}		
 	}
-
-
-F2::
+	
+F4::
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
 	ToolTip, end-macro, 0, 0
 	msg = [+] END TO FB MACRO [%playing% DONE]- %ip%
 	log(msg)
+	msg = ########################################
+	log(msg)
 	ExitApp	
 
-F3::
-	Pause ; suspend
-	
-F4::
-	Reload
-	
+F6:: 
+	log_init()
+	msg = test
+	log(msg)
+	exitapp
+
+/* 
+f1 just login for test
+f2 just hit for test
+f3 login+hit
+f4 pause
+*/
 	
 go_smithy(){ ; 대장간
 	;2 case. not needs. depracte

@@ -8,7 +8,9 @@ myip(){
 
 
 F1:: 
-	msg = [+] START TO FB MACRO [%playing% DONE] - myip()
-	msgbox % msg
+	
+	FileGetSize, last_log_file_size,  .\\log\\log0.txt, K	
+	msgbox % last_log_file_size
+	
 F2::
 	ExitApp
