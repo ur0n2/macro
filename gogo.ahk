@@ -594,29 +594,65 @@ winbaram_execution_loader(id1, id2){
 go_training_scenario(id) {
 	msg = [+] GO TRAINING SCENARIO START - %id%
 	log(msg)
+	
 	loop, 6 { ; scenario 1
-		find_training_image_status := find_training_image(id)
-		if (find_training_image_status ){
-			msg = [+] FIND TRAINING IMAGE SUCCESS ! - %id%
-			log(msg)		
-			return True
-		}
-		msg = [-] FIND TRAINING IMAGE FAIL. RE-TRY ! - %id%
+		move_training_map_status := move_training_map(id)
+		msg = [+] MOVE TRAINING MAP - %id%
 		log(msg)
+		if (move_training_map_status = True) {
+			find_training_image_status := find_training_image(id)
+			if (find_training_image_status ){
+				msg = [+] FIND TRAINING IMAGE SUCCESS ! - %id%
+				log(msg)		
+				return True
+			}
+			else {
+				msg = [-] FIND TRAINING IMAGE FAIL. RE-TRY ! - %id%
+				log(msg)
+				continue
+				}
+			}
+		else {
+			msg = [-] MOVE TRAINING MAP STATUS IS FALSE - %id%
+			log(msg)
+			return False
+		}
 	}
+	msg = [-] GO TRAINING SCENARIO FAIL - %id%
+	log(msg)
 	return False
 }
 
 go_tree_scenario(id) {
 	msg = [+] GO TREE SCENARIO START - %id%
-log(msg)
-	find_tree_image_status := find_tree_image(id)
-	if (find_tree_image_status ){
-		msg = [+] FIND TREE IMAGE SUCCESS ! - %id%
+	log(msg)
+	
+	loop, 11 
+	{
+		move_tree_map_status := move_tree_map(id)
+		msg = [+] MOVE TREE MAP - %id%
 		log(msg)
-		return True
+	
+		if (move_tree_map_status) {
+			find_tree_image_status := find_tree_image(id)
+			if (find_tree_image_status ){
+				msg = [+] FIND TREE IMAGE SUCCESS ! - %id%
+				log(msg)
+				return True
+			}
+			else {
+				msg = [-] FIND TREE IMAGE FAIL. RE-TRY ! - %id%
+				log(msg)
+				continue
+			}
+		}
+		else {
+			msg = [-] MOVE TREE MAP STATUS IS FALSE - %id%
+			log(msg)
+			return False
+		}
 	}
-	msg = [-] FIND TREE IMAGE FAIL. RE-TRY ! - %id%
+	msg = [-] GO TREE SCENARIO FAIL - %id%
 	log(msg)
 	return False
 }
@@ -626,53 +662,54 @@ job_starter(id, job) {
 	log(msg)
 	
 	if  (job = "tree") {
-		move_tree_map_status := move_tree_map(id)
-		msg = [+] MOVE TREE MAP - %id%
+		msg = [+] GO TREE SCENARIO - %id%
 		log(msg)
-		if (move_tree_map_status) {
-			msg = [+] GO TREE SCENARIO - %id%
+		go_tree_scenario_result := go_tree_scenario(id)
+		if (go_tree_scenario_result = True) {
+			msg = [+] GO TREE SCENARIO SUCCESS - %id%
 			log(msg)
-			loop, 11
-				go_tree_scenario_result := go_tree_scenario(id) ; i want to unconditional success.
-			if (go_tree_scenario_result = True) {
-				msg = [+] GO TREE SCENARIO SUCCESS - %id%
-				log(msg)
-				return True
-			}
-			else {
-				msg = [-] GO TREE SCENARIO FAIL - %id%
-				log(msg)
-				return False
-			}
+			return True
 		}
 		else {
-			msg = [-] MOVE TREE MAP STATUS IS FALSE - %id%
+			msg = [-] GO TREE SCENARIO FAIL - %id%
 			log(msg)
 			return False
 		}
 	}
-	else { ;(job = training)
-		move_training_map_status := move_training_map(id)
-		msg = [+] MOVE TRAINING MAP - %id%
+	else if (job ="training")
+	{
+		msg = [+] GO TRAINING SCENARIO - %id%
 		log(msg)
-		if (move_training_map_status = True) {
-			msg = [+] GO TRAINING SCENARIO - %id%
+		go_training_scenario_result := go_training_scenario(id) ; 
+		if (go_training_scenario_result = True) {
+			msg = [+] GO TRAINING SCENARIO SUCCESS - %id%
 			log(msg)
-			go_training_scenario(id) ; i want to unconditional success.
-			if (go_training_scenario_result = True) {
-				msg = [+] GO TRAINING SCENARIO SUCCESS - %id%
-				log(msg)
-				return True
-			}
-			else {
-				msg = [-] GO TRAINING SCENARIO FAIL - %id%
-				log(msg)
-				return False
-			}
+			return True
 		}
 		else {
-			msg = [-] MOVE TRAINING MAP STATUS IS FALSE - %id%
+			msg = [-] GO TRAINING SCENARIO FAIL - %id%
 			log(msg)
+			return False
+		}
+	}
+	else {
+		msg = [-] %id% JOB IS %job% ERROR
+		log(msg)
+		return False
+	}
+}
+
+job_loader() 
+{
+	job_starter_id1_result := job_starter(id1, id1_job)
+	job_starter_id2_result := job_starter(id2, id2_job)
+	;msgbox % job_starter_id1_result
+	;msgbox % job_starter_id2_result
+	if ( job_starter_id1_result && job_starter_id2_result) {
+		log("[+] HIT START")
+		hit_result := hit(id1,id2)
+		if (hit_result = False){
+			log("[-] HIT ERROR") ; do not raise this case
 			return False
 		}
 	}
@@ -700,22 +737,6 @@ login(id1, id2)
 		return True
 		
 	}
-		/*
-		job_starter_id1_result := job_starter(id1, id1_job)
-		job_starter_id2_result := job_starter(id2, id2_job)
-		
-		if ( job_starter_id1_result && job_starter_id2_result) {
-			;while True{ ; 있어야 하나?  
-			;infinite loop in hit 
-			log("[+] HIT START")
-			hit_result := hit(id1,id2)
-			if (hit_result = False){
-				log("[-] HIT ERROR") ; do not raise this case
-				return False
-			}
-			;}
-		}
-		*/
 }
 
 myip(){
@@ -747,7 +768,7 @@ id_pw_set(){
 		winbaram_path = C:\Users\ur0n2\Desktop\123.lnk
 	}
 	else {
-		msg = [-] IP NOT FIND, ExitApp 
+		msg = [-] IP NOT FIND
 		log(msg)
 		ExitApp
 	}
@@ -801,66 +822,113 @@ F1::
 			; goto restart
 		}
 	}
+	settimer, server_check_sub, OFF  
 	ExitApp
 	
-	;settimer, server_check_sub, OFF  
+	
 	
 F2::
-	msg = `n
-	log(msg)
-	msg = ########################################
-	log(msg)
-	msg = ############## [F2 HIT TEST] ##############
-	log(msg)
-	msg = ########################################
-	log(msg)
-
-F3::
-	msg = `n
-	log(msg)
-	msg = ########################################
-	log(msg)
-	msg = ############ [F3 LOGIN & HIT] #############
-	log(msg)
-	msg = ########################################
-	log(msg)
 	global server_flag = False
 	global no_response_flag = False
-	global playing := playing + 1
+	global playing  := playing + 1
 	
 	log_init()
 	ip := myip()
 	
-	msg = [+] START FB MACRO [%playing% DONE] - %ip%`n
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############## [F2 JOB TEST] ##############
+	log(msg)
+	msg = ########################################
+	log(msg)
+	
+	msg = [+] START FB MACRO [%playing% DONE] - %ip%
 	log(msg)
 	
 	id_pw_set()
 	msg = [+] ID / PW SETTING
 	log(msg)
 	
+	;clean_process()
+	msg = [+] CLEAN PROCESS COMPLETE
+	log(msg)			
+	
 	log("[+] START SETTIMER FOR SERVER STATUS")	
-	settimer, server_check_sub, 300000 ; 5 minutes
+	settimer, server_check_sub, 90000 ; 90 second
 	log("[+] SETTIMER ON")
 	
-	while true{	
-		if (clean_process()){
-			log("[+] CLEAN PROCESS COMPLETE")			
-			if (server_flag){
-				log("[+] SERVER DISCONNECTION... ")
-				server_flag = False ; equally global server_flag = false				
-				log("[+] SERVER FLAG RESET")				
-			}	
-			else
-				log("[+] SERVER STATUS IS CLEAN") ;WINBARAM STATUS IS CLEAN
-
-			login_result := login(id1, id2)
-			
-			if (login_result = False){
-				log("[-] MAIN RESULT IS FALSE GOTO F1")
-				goto F1
-			}
-		}		
+	if (server_flag){
+		log("[+] SERVER DISCONNECTION... ")
+		server_flag = False ; equally global server_flag = false				
+		log("[+] SERVER FLAG RESET")				
+	}	
+	else {
+		log("[+] SERVER STATUS IS CLEAN") ;WINBARAM STATUS IS CLEAN
+		job_loader()
+		/*
+		login_result := login(id1, id2)		
+		if (login_result = False) {
+			log("[-] LOGIN FAIL")
+			; goto restart
+		}
+		*/
 	}
+	;settimer, server_check_sub, OFF  
+	
+F3::
+	global server_flag = False
+	global no_response_flag = False
+	global playing  := playing + 1
+	
+	log_init()
+	ip := myip()
+	
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############ [F3 LOGIN & JOB] #############
+	log(msg)
+	msg = ########################################
+	log(msg)
+		
+	msg = [+] START FB MACRO [%playing% DONE] - %ip%
+	log(msg)
+	
+	id_pw_set()
+	msg = [+] ID / PW SETTING
+	log(msg)
+	
+	clean_process()
+	msg = [+] CLEAN PROCESS COMPLETE
+	log(msg)			
+	
+	log("[+] START SETTIMER FOR SERVER STATUS")	
+	settimer, server_check_sub, 90000 ; 90 second
+	log("[+] SETTIMER ON")
+	
+	if (server_flag){
+		log("[+] SERVER DISCONNECTION... ")
+		server_flag = False ; equally global server_flag = false				
+		log("[+] SERVER FLAG RESET")				
+	}	
+	else {
+		log("[+] SERVER STATUS IS CLEAN") ;WINBARAM STATUS IS CLEAN
+		login_result := login(id1, id2)		
+		if (login_result = True) {
+			job_loader()
+		}
+		else if (login_result = False) {
+			log("[-] LOGIN FAIL")
+			settimer, server_check_sub, OFF  
+			goto F3
+		}
+	}
+	;settimer, server_check_sub, OFF  
+	;ExitApp
+	
 	
 F4::
 	msg = `n
@@ -882,8 +950,8 @@ F6::
 
 /* 
 f1 just login for test
-f2 just hit for test
-f3 login+hit
+f2 just job for test
+f3 login+job
 f4 pause
 */
 	

@@ -8,9 +8,8 @@ myip(){
 
 
 F1:: 
-	
-	FileGetSize, last_log_file_size,  .\\log\\log0.txt, K	
-	msgbox % last_log_file_size
+	job_starter_id1_result := True
+	msgbox % job_starter_id1_result
 	
 F2::
 	ExitApp
