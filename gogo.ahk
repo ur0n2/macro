@@ -128,6 +128,7 @@ winbaram_execution(id, pw){
 		ToolTip, login1-sucess, 0, 0
 		;mousemove, fx+11, fy+11
 		mouseclick left, fx+11, fy+11, 2
+		
 		mousemove, 10, 10 		
 		sleep, 2000
 		ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, login2.bmp
@@ -141,14 +142,14 @@ winbaram_execution(id, pw){
 			{
 				ToolTip, login3-success, 0, 0
 				set_login(id, pw)
-							
+				
 				WinSetTitle, 바람의 나라, , %id% 
 				WinActivate, %id%
 				sleep, 500
 				winmove, %id%, , 0, 0
 				msg = [+] LOGIN SUCCESS - %id%
 				log(msg)
-				gosub, server_check_sub ; first login and first check
+				server_check_sub() ; first login and first check
 				return True				
 			}
 			else ;if errorlevel = 1
@@ -236,7 +237,7 @@ server_reconn_check(id){
 	return False
 }
 
-server_check_sub:
+server_check_sub() {
 	log("[+] SERVER CHECK SUB")
 	server_reconn_check_result1 := server_reconn_check(id1)
 	server_reconn_check_result2 := server_reconn_check(id2)
@@ -251,10 +252,10 @@ server_check_sub:
 		log("[+] WAIT FOR SERVER REBOOTING...")
 		;settimer, server_check_sub, off
 		;log("[-] SETTIMER OFF")
-		goto F1
+		gosub, F3
 	}
 	return
-
+}
 
 hit(id1, id2){
 	WinActivate, %id1%
@@ -760,10 +761,10 @@ id_pw_set(){
 	}
 	else if (ip =  "203.250.148.136") { ;136vm
 		id1 = 손나은
-		id1_pw = apfhd12
+		id1_pw = apfhd
 		id1_job = tree
 		id2 = 윤아
-		id2_pw = apfhd12
+		id2_pw = apfhd
 		id2_job = tree
 		winbaram_path = C:\Users\ur0n2\Desktop\123.lnk
 	}
@@ -906,7 +907,7 @@ F3::
 	log(msg)			
 	
 	log("[+] START SETTIMER FOR SERVER STATUS")	
-	settimer, server_check_sub, 90000 ; 90 second
+	settimer, server_check_sub, 600000 ; 10 minute
 	log("[+] SETTIMER ON")
 	
 	if (server_flag){
@@ -923,6 +924,7 @@ F3::
 		else if (login_result = False) {
 			log("[-] LOGIN FAIL")
 			settimer, server_check_sub, OFF  
+			sleep, 600000 ; 10 minute
 			goto F3
 		}
 	}
