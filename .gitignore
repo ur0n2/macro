@@ -1,4 +1,4 @@
 log/
 *.bak
 deprecate_img/
-
+machine_config.ini

@@ -1,5 +1,6 @@
 #Persistent
 global playing = 0
+global ip
 global id1
 global id1_pw
 global id1_job
@@ -773,7 +774,6 @@ id_pw_set(){
 		log(msg)
 		ExitApp
 	}
-		
 }
 
 
