@@ -215,7 +215,7 @@ server_reconn_check(id){
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, reconn.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10 
-		msg = [-] SERVER DISCONNECDTION IMAGE FINDED - %id%
+		msg = [-] SERVER DISCONNECDTION IMAGE FOUND - %id%
 		log(msg)		
 		return True
 	}
@@ -223,17 +223,27 @@ server_reconn_check(id){
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, no_response.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10 
-		msg = [-] WINBARAM.EXE NO RESPONSE IMAGE FINDED - %id%
+		msg = [-] NO RESPONSE IMAGE FOUND WINBARAM.EXE - %id%
 		log(msg)		
 		return True
 	}
 	
-	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, nonmsgbox.bmp
+	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, nonmsgbox_already_storm.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10 
-		msg = [-] WINBARAM.EXE NON MSGBOX IMAGE FINDED - %id%
+		msg = [-] NONMSGBOX_ALREADY_STORM IMAGE FOUND - %id%
 		log(msg)		
 		return True
+	}
+	
+	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, teamV_sponsor_session_timeout.bmp
+	if (errorlevel = 0) {
+		tooltip, server_reconnection, 10, 10 
+		msg = [+] teamV_sponsor_session_timeout IMAGE FOUND - %id%
+		log(msg)		
+		mousemove, fx+1, fy+1
+		mouseclick, left, fx+1, fy+1, 1
+		return False
 	}
 	return False
 }
