@@ -1,32 +1,8 @@
-#Persistent
-
-check(){
-	msgbox, , , check
-}
-
-check1(){
-	msgbox, , , check1
-}
-
-
-F1::
-	settimer, check1, 2000
-	msgbox, , , test
-
-
-F2::
-	ExitApp
-
-
-F3::
-	while True {
-		controlsend, , {p down}, test.txt
-		sleep, 1000
+	id_pw_set_result := True
+	if (id_pw_set_result != False) {
+		msg = [-] ID/PW SET FAILED
+		msgbox, , , %msg% ;log(msg)		
+	else {
+		msg = [+] ID/PW SET SUCCESSED
+		msgbox, , , %msg% ;log(msg)
 	}
-	
-F4::
-	Pause, ON
-F6::
-	Pause, OFF
-
-	

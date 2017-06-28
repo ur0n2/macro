@@ -747,33 +747,36 @@ myip(){
 	return ip
 }
 
+CountSubstring(fullstring, substring){
+   StringReplace, junk, fullstring, %substring%, , UseErrorLevel
+   return errorlevel
+}
 
-id_pw_set(){
-	ip := myip()
+id_pw_set(){ 
+	local_ip := myip()	
+	IniRead, OutputVarSectionNames, machine_config.ini	
+	section_count := countSubstring(OutputVarSectionNames, "machine") 
 	
-	if (ip = "192.168.57.5"){ ; lg
-		id1 = Ä«¶ó
-		id1_pw = 123123
-		id1_job = training
-		id2 = ²ô¾Æ
-		id2_pw = 123123
-		id2_job = tree
-		winbaram_path =  C:\Users\ur0n2\Desktop\123.lnk
-	}
-	else if (ip =  "203.250.148.136") { ;136vm
-		id1 = ¼Õ³ªÀº
-		id1_pw = apfhd
-		id1_job = tree
-		id2 = À±¾Æ
-		id2_pw = apfhd
-		id2_job = tree
-		winbaram_path = C:\Users\ur0n2\Desktop\123.lnk
-	}
-	else {
-		msg = [-] IP NOT FIND
-		log(msg)
-		ExitApp
-	}
+	loop, %section_count% {
+		IniRead, ip, machine_config.ini, machine%A_Index%, ip
+		if ( ip = local_ip) {			
+			IniRead, ip, machine_config.ini, machine%A_Index%, ip
+			IniRead, id1, machine_config.ini, machine%A_Index%, id1
+			IniRead, id1_pw, machine_config.ini, machine%A_Index%, id1_pw	
+			IniRead, id1_job, machine_config.ini, machine%A_Index%, id1_job
+			IniRead, id2, machine_config.ini, machine%A_Index%, id2
+			IniRead, id2_pw, machine_config.ini, machine%A_Index%, id2_pw	
+			IniRead, id2_job, machine_config.ini, machine%A_Index%, id2_job
+			IniRead, winbaram_path, machine_config.ini, machine%A_Index%, winbaram_path		
+			msg =  [+] MACHINE IP FOUND !`n[+] MACHINE CONFIG: %ip% %id1% %id1_pw% %id1_job% %id2% %id2_pw% %id2_job% %winbaram_path%
+			log(msg)
+			return True
+		}		
+	}			
+	
+	msg = [-] MACHINE IP NOT FOUND
+	log(msg)
+	return False
 }
 
 
@@ -798,9 +801,19 @@ F1::
 	msg = [+] START FB MACRO [%playing% DONE] - %ip%
 	log(msg)
 	
-	id_pw_set()
 	msg = [+] ID / PW SETTING
-	log(msg)
+	log(msg)	
+	id_pw_set_result := id_pw_set()
+	if (id_pw_set_result != False) {
+		msg = [-] ID/PW SET FAILED
+		log(msg)
+		ExitApp
+	}
+	else {
+		msg = [+] ID/PW SET SUCCESSED
+		log(msg)
+	}
+	
 	
 	clean_process()
 	msg = [+] CLEAN PROCESS COMPLETE
@@ -848,9 +861,18 @@ F2::
 	msg = [+] START FB MACRO [%playing% DONE] - %ip%
 	log(msg)
 	
-	id_pw_set()
 	msg = [+] ID / PW SETTING
-	log(msg)
+	log(msg)	
+	id_pw_set_result := id_pw_set()
+	if (id_pw_set_result != False) {
+		msg = [-] ID/PW SET FAILED
+		log(msg)
+		ExitApp
+	}
+	else {
+		msg = [+] ID/PW SET SUCCESSED
+		log(msg)
+	}
 	
 	;clean_process()
 	msg = [+] CLEAN PROCESS COMPLETE
@@ -898,9 +920,18 @@ F3::
 	msg = [+] START FB MACRO [%playing% DONE] - %ip%
 	log(msg)
 	
-	id_pw_set()
 	msg = [+] ID / PW SETTING
-	log(msg)
+	log(msg)	
+	id_pw_set_result := id_pw_set()
+	if (id_pw_set_result != False) {
+		msg = [-] ID/PW SET FAILED
+		log(msg)
+		ExitApp
+	}
+	else {
+		msg = [+] ID/PW SET SUCCESSED
+		log(msg)
+	}
 	
 	clean_process()
 	msg = [+] CLEAN PROCESS COMPLETE

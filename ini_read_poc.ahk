@@ -1,4 +1,3 @@
-
 myip(){
 	;log("[+] GET MY IP")
 	ip = %A_IPAddress1%
@@ -27,8 +26,9 @@ loop, %section_count% {
 	local_ip := myip()	
 	;msgbox, %local_ip%	
 	if ( ip = local_ip) {
-		msgbox, , , %ip%`n%id1%`n%id1_pw%`n%id1_job%`n%id2%`n%id2_pw%`n%id2_job%`n%winbaram_path% 
-		;return
+		msg =  [+] MACHINE CONFIG: %ip% %id1% %id1_pw% %id1_job% %id2% %id2_pw% %id2_job% %winbaram_path%
+		;log(msg)
+		msgbox, , , %msg%
 	}
 } 
 
