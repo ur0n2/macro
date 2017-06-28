@@ -857,7 +857,7 @@ F2::
 	log(msg)			
 	
 	log("[+] START SETTIMER FOR SERVER STATUS")	
-	settimer, server_check_sub, 90000 ; 90 second
+	settimer, server_check_sub, 600000 ; 10 minutes
 	log("[+] SETTIMER ON")
 	
 	if (server_flag){
@@ -946,15 +946,51 @@ F4::
 
 F6:: 
 	log_init()
-	msg = test
+	ip := myip()
+	; global hitting = 1
+	
+	msg = `n
 	log(msg)
-	exitapp
+	msg = ########################################
+	log(msg)
+	msg = ############## [F6 HIT STOP] ##############
+	log(msg)
+	msg = ########################################
+	log(msg)
+	Pause, ON
+	msg = [-] MACRO STOP(PAUSE ON) FOR HITTING
+	
+F7:: 
+	log_init()
+	ip := myip()
+	
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############# [F7 HIT RESUME] ##############
+	log(msg)
+	msg = ########################################
+	log(msg)
+	Pause, OFF
+	msg = [+] MACRO RESUME(PAUSE OFF) FOR HITTING
+	
 
+F8::
+	log_init()
+	ip := myip()
+	msg = test
+	log(test)
+	ExitApp
+	
 /* 
-f1 just login for test
-f2 just job for test
-f3 login+job
-f4 pause
+F1 Just login for test
+F2 Just job for test
+F3 Login + job for macro
+F4 ExitApp
+F6 HIT STOP
+F7 HIT START
+F8 test
 */
 	
 go_smithy(){ ; ¥Î¿Â∞£

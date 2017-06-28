@@ -1,15 +1,32 @@
+#Persistent
 
-myip(){
-	log("[+] GET MY IP")
-	ip = %A_IPAddress1%
-	return ip
+check(){
+	msgbox, , , check
+}
+
+check1(){
+	msgbox, , , check1
 }
 
 
+F1::
+	settimer, check1, 2000
+	msgbox, , , test
 
-F1:: 
-	job_starter_id1_result := True
-	msgbox % job_starter_id1_result
-	
+
 F2::
 	ExitApp
+
+
+F3::
+	while True {
+		controlsend, , {p down}, test.txt
+		sleep, 1000
+	}
+	
+F4::
+	Pause, ON
+F6::
+	Pause, OFF
+
+	
