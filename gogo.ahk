@@ -632,6 +632,34 @@ find_moksuNPC(id){
 	return False
 }
 
+find_moksuNPC2(id){
+	WinActivate, %id%
+	sleep,1000
+	loop, 20
+		controlsend, , {TAB}{ENTER}, %id%
+	imagesearch, fx, fy, A_ScreenWidth, A_ScreenHeight, moksNPCmsg.bmp
+	if ErrorLevel = 0 
+	{
+		msg = [+] FIND MOKSU-NPC2 SUCCESS - %id%
+		log(msg)
+		return True
+	}
+	loop, 10
+		controlsend, {TAB}{UP}{ENTER}, %id%
+		imagesearch, fx, fy, A_ScreenWidth, A_ScreenHeight, moksNPCmsg.bmp
+		if ErrorLevel = 0 
+		{
+			msg = [+] FIND MOKSU-NPC2 SUCCESS - %id%
+			log(msg)
+			return True
+		}
+	}
+	
+	msg = [-] FIND MOKSU-NPC2 FAIL - %id%
+	log(msg)
+	return False
+}
+
 move_tree_map(id){
 	WinActivate, %id%
 	sleep,1000
@@ -669,6 +697,17 @@ move_tree_map(id){
 			controlsend, , {ENTER}, %id%  
 			sleep, 500
 			return True
+		}
+		else {
+			find_moksuNPC2_result := find_moksuNPC2(id)
+			if (find_moksuNPC_result){
+				sleep, 1000
+				controlsend, , {DOWN}, %id%  
+				sleep, 500
+				controlsend, , {ENTER}, %id%  
+				sleep, 500
+				return True
+			}
 		}
 	}
 	return False
@@ -1076,7 +1115,7 @@ F3::
 		else if (login_result = False) {
 			log("[-] LOGIN FAIL")
 			;settimer, server_check_sub, OFF  
-			sleep, 60000 ; 10 minute
+			sleep, 600000 ; 10 minute
 			goto F3
 		}
 	}
