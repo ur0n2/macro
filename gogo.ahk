@@ -279,6 +279,8 @@ hit(id1, id2){
 	sleep, 2000
 	
 	log("[+] HITTING... !")
+	settimer, server_check_sub, OFF ; 10 minute
+	settimer, server_check_sub, 600000 ; 10 minute
 	while True{
 		controlsend, , {space}{space}{space}, %id1% ; need to test for effectiveness
 		; sleep, 1 ; enough
@@ -328,7 +330,8 @@ find_tree_image(id)
 	log(msg)
 	WinActivate, %id%
 	sleep,1000
-	controlsend, , n, %id% ; name remove
+	;controlsend, , n, %id% ; name remove
+	find_tree_flag = 0
 	;loop, 17
 	;	controlsend, , {RIGHT} , %id% ; just for recoginize high probability. deprecate
 	; -> scenario... move coordinate or click move, etc...
@@ -352,101 +355,106 @@ find_tree_image(id)
 					
 				}
 			}
-			else if ErrorLe	vel = 0
+			else if ErrorLevel = 0
 				break
 		}
-		else if ErrorLe	vel = 0
+		else if ErrorLevel = 0
 			break
 		
 		loop, 20
+		{
 			controlsend, , {RIGHT} , %id% ; 
-		
-		ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
-		if ErrorLevel != 0 
-		{
-			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
 			if ErrorLevel != 0 
 			{
-				ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
-				if ErrorLevel = 0 
-				{					
-					break
-					/* 
-					msg = [+] FIND TREE IMAGE IS FAIL - %id%
-					log(msg)
-					return False
-					*/
-					
+				ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+				if ErrorLevel != 0 
+				{
+					ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
+					if ErrorLevel = 0 
+					{					
+						break
+					}
 				}
+				else if ErrorLevel = 0
+					break
 			}
-			else if ErrorLe	vel = 0
+			else if ErrorLevel = 0
 				break
 		}
-		else if ErrorLe	vel = 0
-			break
 		
 		loop, 20
+		{
 			controlsend, , {DOWN} , %id% ; 
-		
-		ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
-		if ErrorLevel != 0 
-		{
-			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
 			if ErrorLevel != 0 
 			{
-				ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
-				if ErrorLevel = 0 
-				{					
-					break
-					/* 
-					msg = [+] FIND TREE IMAGE IS FAIL - %id%
-					log(msg)
-					return False
-					*/
-					
+				ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+				if ErrorLevel != 0 
+				{
+					ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
+					if ErrorLevel = 0 
+					{					
+						break
+					}
 				}
+				else if ErrorLevel = 0
+					break
 			}
-			else if ErrorLe	vel = 0
+			else if ErrorLevel = 0
 				break
 		}
-		else if ErrorLe	vel = 0
-			break
 		
 		loop, 20
+		{
 			controlsend, , {LEFT} , %id% ; 
-		
-		ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
-		if ErrorLevel != 0 
-		{
-			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
 			if ErrorLevel != 0 
 			{
-				ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
-				if ErrorLevel = 0 
-				{					
-					break
-					/* 
-					msg = [+] FIND TREE IMAGE IS FAIL - %id%
-					log(msg)
-					return False
-					*/
-					
+				ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+				if ErrorLevel != 0 
+				{
+					ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
+					if ErrorLevel = 0 
+					{					
+						break
+					}
 				}
+				else if ErrorLevel = 0
+					break
 			}
-			else if ErrorLe	vel = 0
+			else if ErrorLevel = 0
 				break
 		}
-		else if ErrorLe	vel = 0
-			break
 		
 		loop, 20
+		{
 			controlsend, , {UP} , %id% ; 
+			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
+			if ErrorLevel != 0 
+			{
+				ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+				if ErrorLevel != 0 
+				{
+					ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
+					if ErrorLevel = 0 
+					{					
+						break
+					}
+				}
+				else if ErrorLevel = 0
+					break
+			}
+			else if ErrorLevel = 0
+				break
+		}
 		
 	}
 	; 위아래양옆, corr$.bmp로 반복문 가능 
 	;after find tree sucess
 	if (errorlevel = 0) {
 		msg = [+] FIND TREE IMAGE SUCCESS - %id%
+		sleep,5000
 		log(msg)
 		mouseclick, left, fx+27, fy+40, 1
 		mousemove, 10, 10 		
@@ -458,6 +466,7 @@ find_tree_image(id)
 		{
 			msg = [+] TREE IN FRONT OF U SUCCESS BY SEMICOLON CHECK - %id%
 			log(msg)
+			;controlsend, , status window cleaning ; example: ctrl+v is no used item  ==cause, magic point item
 			return True
 		}
 		else
@@ -915,7 +924,7 @@ F1::
 	msg = [+] ID / PW SETTING
 	log(msg)	
 	id_pw_set_result := id_pw_set()
-	if (id_pw_set_result != False) {
+	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
 		ExitApp
@@ -975,7 +984,7 @@ F2::
 	msg = [+] ID / PW SETTING
 	log(msg)	
 	id_pw_set_result := id_pw_set()
-	if (id_pw_set_result != False) {
+	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
 		ExitApp
@@ -1034,7 +1043,7 @@ F3::
 	msg = [+] ID / PW SETTING
 	log(msg)	
 	id_pw_set_result := id_pw_set()
-	if (id_pw_set_result != False) {
+	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
 		ExitApp
@@ -1049,6 +1058,7 @@ F3::
 	log(msg)			
 	
 	log("[+] START SETTIMER FOR SERVER STATUS")	
+	settimer, server_check_sub, OFF ; 10 minute
 	settimer, server_check_sub, 600000 ; 10 minute
 	log("[+] SETTIMER ON")
 	
@@ -1066,7 +1076,7 @@ F3::
 		else if (login_result = False) {
 			log("[-] LOGIN FAIL")
 			;settimer, server_check_sub, OFF  
-			sleep, 600000 ; 10 minute
+			sleep, 60000 ; 10 minute
 			goto F3
 		}
 	}
