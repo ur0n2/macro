@@ -332,23 +332,117 @@ find_tree_image(id)
 	;loop, 17
 	;	controlsend, , {RIGHT} , %id% ; just for recoginize high probability. deprecate
 	; -> scenario... move coordinate or click move, etc...
-	
-	ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
-	if ErrorLevel != 0 
+	loop, 1
 	{
-		ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+		ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
 		if ErrorLevel != 0 
 		{
-			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
+			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
 			if ErrorLevel != 0 
-			{						
-				msg = [+] FIND TREE IMAGE IS FAIL - %id%
-				log(msg)
-				return False
+			{
+				ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
+				if ErrorLevel = 0 
+				{					
+					break
+					/* 
+					msg = [+] FIND TREE IMAGE IS FAIL - %id%
+					log(msg)
+					return False
+					*/
+					
+				}
 			}
+			else if ErrorLe	vel = 0
+				break
 		}
+		else if ErrorLe	vel = 0
+			break
+		
+		loop, 20
+			controlsend, , {RIGHT} , %id% ; 
+		
+		ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
+		if ErrorLevel != 0 
+		{
+			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+			if ErrorLevel != 0 
+			{
+				ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
+				if ErrorLevel = 0 
+				{					
+					break
+					/* 
+					msg = [+] FIND TREE IMAGE IS FAIL - %id%
+					log(msg)
+					return False
+					*/
+					
+				}
+			}
+			else if ErrorLe	vel = 0
+				break
+		}
+		else if ErrorLe	vel = 0
+			break
+		
+		loop, 20
+			controlsend, , {DOWN} , %id% ; 
+		
+		ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
+		if ErrorLevel != 0 
+		{
+			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+			if ErrorLevel != 0 
+			{
+				ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
+				if ErrorLevel = 0 
+				{					
+					break
+					/* 
+					msg = [+] FIND TREE IMAGE IS FAIL - %id%
+					log(msg)
+					return False
+					*/
+					
+				}
+			}
+			else if ErrorLe	vel = 0
+				break
+		}
+		else if ErrorLe	vel = 0
+			break
+		
+		loop, 20
+			controlsend, , {LEFT} , %id% ; 
+		
+		ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree.bmp
+		if ErrorLevel != 0 
+		{
+			ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree1.bmp
+			if ErrorLevel != 0 
+			{
+				ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *30 tree2.bmp
+				if ErrorLevel = 0 
+				{					
+					break
+					/* 
+					msg = [+] FIND TREE IMAGE IS FAIL - %id%
+					log(msg)
+					return False
+					*/
+					
+				}
+			}
+			else if ErrorLe	vel = 0
+				break
+		}
+		else if ErrorLe	vel = 0
+			break
+		
+		loop, 20
+			controlsend, , {UP} , %id% ; 
+		
 	}
-	
 	; 위아래양옆, corr$.bmp로 반복문 가능 
 	;after find tree sucess
 	if (errorlevel = 0) {
@@ -664,6 +758,7 @@ go_tree_scenario(id) {
 			return False
 		}
 	}
+	
 	msg = [-] GO TREE SCENARIO FAIL - %id%
 	log(msg)
 	return False
@@ -724,6 +819,12 @@ job_loader()
 			log("[-] HIT ERROR") ; do not raise this case
 			return False
 		}
+		return True
+	}
+	else {
+		msg = [-] JOB LOADER FAIL
+		log(msg)
+		return False
 	}
 }
 
@@ -846,7 +947,7 @@ F1::
 			; goto restart
 		}
 	}
-	settimer, server_check_sub, OFF  
+	;settimer, server_check_sub, OFF  
 	ExitApp
 	
 	
@@ -964,7 +1065,7 @@ F3::
 		}
 		else if (login_result = False) {
 			log("[-] LOGIN FAIL")
-			settimer, server_check_sub, OFF  
+			;settimer, server_check_sub, OFF  
 			sleep, 600000 ; 10 minute
 			goto F3
 		}
