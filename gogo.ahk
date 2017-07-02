@@ -1,4 +1,5 @@
 #Persistent
+settimer, server_check_sub, 60000 
 global playing = 0
 global ip
 global id1
@@ -150,7 +151,7 @@ winbaram_execution(id, pw){
 				winmove, %id%, , 0, 0
 				msg = [+] LOGIN SUCCESS - %id%
 				log(msg)
-				server_check_sub() ; first login and first check
+				;server_check_sub() ; first login and first check
 				return True				
 			}
 			else ;if errorlevel = 1
@@ -254,7 +255,7 @@ server_check_sub() {
 	server_reconn_check_result2 := server_reconn_check(id2)
 	if (server_reconn_check_result1 || server_reconn_check_rsesult2 ){
 		global server_flag = True
-		msg = [+] SERVER FLAG IN server_check_sub PROCEDURE: %server_flag%
+		msg = [+] SERVER FLAG IN server check sub PROCEDURE: %server_flag%
 		log(msg)
 		msgbox, , , server is down, 1
 		log("[-] SERVER IS DOWN... RESTART !")
@@ -264,6 +265,7 @@ server_check_sub() {
 		;settimer, server_check_sub, off
 		;log("[-] SETTIMER OFF")
 		gosub, F3
+		
 	}
 	return
 }
@@ -279,8 +281,9 @@ hit(id1, id2){
 	sleep, 2000
 	
 	log("[+] HITTING... !")
-	settimer, server_check_sub, OFF ; 10 minute
-	settimer, server_check_sub, 600000 ; 10 minute
+	;settimer, server_check_sub, OFF ; 10 minute
+	;sleep, 5000
+	;settimer, server_check_sub, 50000 ; 10 minute
 	while True{
 		controlsend, , {space}{space}{space}, %id1% ; need to test for effectiveness
 		; sleep, 1 ; enough
@@ -635,18 +638,20 @@ find_moksuNPC(id){
 find_moksuNPC2(id){
 	WinActivate, %id%
 	sleep,1000
-	loop, 20
-		controlsend, , {TAB}{ENTER}, %id%
-	imagesearch, fx, fy, A_ScreenWidth, A_ScreenHeight, moksNPCmsg.bmp
+	
+	controlsend, , {TAB}{ENTER}, %id%
+	imagesearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, moksuNPCmsg.bmp
 	if ErrorLevel = 0 
 	{
 		msg = [+] FIND MOKSU-NPC2 SUCCESS - %id%
 		log(msg)
 		return True
 	}
+	
 	loop, 10
+	{
 		controlsend, {TAB}{UP}{ENTER}, %id%
-		imagesearch, fx, fy, A_ScreenWidth, A_ScreenHeight, moksNPCmsg.bmp
+		imagesearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, moksuNPCmsg.bmp
 		if ErrorLevel = 0 
 		{
 			msg = [+] FIND MOKSU-NPC2 SUCCESS - %id%
@@ -717,7 +722,13 @@ clean_process(){
 	tooltip, clean_process, 0, 0
 	loop, 10{
 		process, close, winbaram.exe
-		sleep, 500
+		process, close, Teamviewer.exe
+		process, close, TeamViewer_Desktop.exe
+		process, close, TeamViewer_Note.exe
+		process, close, TeamViewer_Service.exe
+		process, close, tv_w32.exe
+		process, close, tv_x64.exe
+		sleep, 10
 	}
 	send, #m
 	send, #m
@@ -727,7 +738,7 @@ clean_process(){
 }
 
 
-winbaram_execution_loader(id1, id2){ 
+winbaram_execution_loader(id1, d2){ 
 	log("[+] WINBARAM EXEUCTION LOADER START")
 	;msgbox, , %id1%
 	ToolTip, start-winbaram, 0, 0
@@ -872,6 +883,8 @@ job_loader()
 	else {
 		msg = [-] JOB LOADER FAIL
 		log(msg)
+		sleep, 60000
+		gosub, F3
 		return False
 	}
 }
@@ -966,7 +979,7 @@ F1::
 	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
-		ExitApp
+		;;ExitApp
 	}
 	else {
 		msg = [+] ID/PW SET SUCCESSED
@@ -996,7 +1009,7 @@ F1::
 		}
 	}
 	;settimer, server_check_sub, OFF  
-	ExitApp
+	;ExitApp
 	
 	
 	
@@ -1026,7 +1039,7 @@ F2::
 	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
-		ExitApp
+		;ExitApp
 	}
 	else {
 		msg = [+] ID/PW SET SUCCESSED
@@ -1037,9 +1050,9 @@ F2::
 	msg = [+] CLEAN PROCESS COMPLETE
 	log(msg)			
 	
-	log("[+] START SETTIMER FOR SERVER STATUS")	
-	settimer, server_check_sub, 600000 ; 10 minutes
-	log("[+] SETTIMER ON")
+	;log("[+] START SETTIMER FOR SERVER STATUS")	
+	;settimer, server_check_sub, 40000 ; 10 minutes
+	;log("[+] SETTIMER ON")
 	
 	if (server_flag){
 		log("[+] SERVER DISCONNECTION... ")
@@ -1085,7 +1098,7 @@ F3::
 	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
-		ExitApp
+		;ExitApp
 	}
 	else {
 		msg = [+] ID/PW SET SUCCESSED
@@ -1096,10 +1109,11 @@ F3::
 	msg = [+] CLEAN PROCESS COMPLETE
 	log(msg)			
 	
-	log("[+] START SETTIMER FOR SERVER STATUS")	
-	settimer, server_check_sub, OFF ; 10 minute
-	settimer, server_check_sub, 600000 ; 10 minute
-	log("[+] SETTIMER ON")
+	;log("[+] START SETTIMER FOR SERVER STATUS")	
+	;settimer, server_check_sub, OFF ; 10 minute
+	;sleep, 5000
+	;settimer, server_check_sub, 30000 ; 10 minute
+	;log("[+] SETTIMER ON")
 	
 	if (server_flag){
 		log("[+] SERVER DISCONNECTION... ")
@@ -1115,12 +1129,12 @@ F3::
 		else if (login_result = False) {
 			log("[-] LOGIN FAIL")
 			;settimer, server_check_sub, OFF  
-			sleep, 600000 ; 10 minute
+			sleep, 60000 ; 10 minute
 			goto F3
 		}
 	}
 	;settimer, server_check_sub, OFF  
-	;ExitApp
+	;;ExitApp
 	
 	
 F4::
@@ -1135,21 +1149,17 @@ F4::
 	log(msg)
 	ExitApp	
 
-F6:: 
-	log_init()
-	ip := myip()
-	; global hitting = 1
-	
+F5::
 	msg = `n
 	log(msg)
 	msg = ########################################
 	log(msg)
-	msg = ############## [F6 HIT STOP] ##############
+	msg = ############# [F9 SETTIMER ON] ##############
 	log(msg)
 	msg = ########################################
 	log(msg)
-	Pause, ON
-	msg = [-] MACRO STOP(PAUSE ON) FOR HITTING
+	;settimer, server_check_sub, 60000 ; 1 minute
+	
 	
 F7:: 
 	log_init()
@@ -1167,18 +1177,45 @@ F7::
 	msg = [+] MACRO RESUME(PAUSE OFF) FOR HITTING
 	
 
-F8::
+F9::
 	log_init()
 	ip := myip()
 	msg = test
 	log(test)
-	ExitApp
+	;ExitApp
 	
+F8:: ; for settimer
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############# [F9 SETTIMER ON] ##############
+	log(msg)
+	msg = ########################################
+	log(msg)
+	;settimer, server_check_sub, 60000 ; 1 minute
+	
+
+F10:: 
+	log_init()
+	ip := myip()
+	; global hitting = 1
+	
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############## [F6 HIT STOP] ##############
+	log(msg)
+	msg = ########################################
+	log(msg)
+	Pause, ON
+	msg = [-] MACRO STOP(PAUSE ON) FOR HITTING
 /* 
 F1 Just login for test
 F2 Just job for test
 F3 Login + job for macro
-F4 ExitApp
+F4 ;ExitApp
 F6 HIT STOP
 F7 HIT START
 F8 test

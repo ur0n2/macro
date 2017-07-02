@@ -1,3 +1,4 @@
+*.exe
 log/
 *.bak
 deprecate_img/
