@@ -1,5 +1,5 @@
 #Persistent
-settimer, server_check_sub, 60000 
+settimer, server_check_sub, 300000
 global playing = 0
 global ip
 global id1
@@ -940,7 +940,9 @@ id_pw_set(){
 			IniRead, id2_pw, machine_config.ini, machine%A_Index%, id2_pw	
 			IniRead, id2_job, machine_config.ini, machine%A_Index%, id2_job
 			IniRead, winbaram_path, machine_config.ini, machine%A_Index%, winbaram_path		
-			msg =  [+] MACHINE IP FOUND !`n[+] MACHINE CONFIG: %ip% %id1% %id1_pw% %id1_job% %id2% %id2_pw% %id2_job% %winbaram_path%
+			msg =  [+] MACHINE IP FOUND !
+			log(msg)
+			msg = [+] MACHINE CONFIG: %ip% %id1% %id1_pw% %id1_job% %id2% %id2_pw% %id2_job% %winbaram_path%
 			log(msg)
 			return True
 		}		
@@ -1009,7 +1011,7 @@ F1::
 		}
 	}
 	;settimer, server_check_sub, OFF  
-	;ExitApp
+	ExitApp
 	
 	
 	
@@ -1039,7 +1041,7 @@ F2::
 	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
-		;ExitApp
+		ExitApp
 	}
 	else {
 		msg = [+] ID/PW SET SUCCESSED
@@ -1134,7 +1136,7 @@ F3::
 		}
 	}
 	;settimer, server_check_sub, OFF  
-	;;ExitApp
+	ExitApp
 	
 	
 F4::
@@ -1149,17 +1151,6 @@ F4::
 	log(msg)
 	ExitApp	
 
-F5::
-	msg = `n
-	log(msg)
-	msg = ########################################
-	log(msg)
-	msg = ############# [F9 SETTIMER ON] ##############
-	log(msg)
-	msg = ########################################
-	log(msg)
-	;settimer, server_check_sub, 60000 ; 1 minute
-	
 	
 F7:: 
 	log_init()
@@ -1182,7 +1173,7 @@ F9::
 	ip := myip()
 	msg = test
 	log(test)
-	;ExitApp
+	ExitApp
 	
 F8:: ; for settimer
 	msg = `n
