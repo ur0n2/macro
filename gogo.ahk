@@ -1,5 +1,5 @@
 #Persistent
-settimer, server_check_sub, 300000
+;settimer, server_check_sub, 30000
 global playing = 0
 global ip
 global id1
@@ -280,15 +280,23 @@ hit(id1, id2){
 	; weather_off()
 	sleep, 2000
 	
-	log("[+] HITTING... !")
 	;settimer, server_check_sub, OFF ; 10 minute
 	;sleep, 5000
 	;settimer, server_check_sub, 50000 ; 10 minute
-	while True{
-		controlsend, , {space}{space}{space}, %id1% ; need to test for effectiveness
-		; sleep, 1 ; enough
-		controlsend, , {space}{space}{space}, %id2% ; need to test for effectiveness
-		sleep, 1 ; enough
+	while True 
+{
+		msg = [+] HITTING... !
+		log(msg)
+		loop, 2500
+		{
+			controlsend, , {space}{space}{space}, %id1% ; need to test for effectiveness
+			; sleep, 1 ; enough
+			controlsend, , {space}{space}{space}, %id2% ; need to test for effectiveness
+			sleep, 1 ; enough
+		}
+		msg= 123s
+		log(msg)
+		server_check_sub()
 	}
 }
 
@@ -720,16 +728,18 @@ move_tree_map(id){
 
 clean_process(){
 	tooltip, clean_process, 0, 0
+	;sleep, 45000 ;
 	loop, 10{
 		process, close, winbaram.exe
-		process, close, Teamviewer.exe
-		process, close, TeamViewer_Desktop.exe
-		process, close, TeamViewer_Note.exe
-		process, close, TeamViewer_Service.exe
-		process, close, tv_w32.exe
-		process, close, tv_x64.exe
+		;process, close, Teamviewer.exe
+		;process, close, TeamViewer_Desktop.exe
+		;process, close, TeamViewer_Note.exe
+		;process, close, TeamViewer_Service.exe
+		;process, close, tv_w32.exe
+		;process, close, tv_x64.exe
 		sleep, 10
 	}
+	;sleep, 45000 ; wait for resolution refresh time from teamviewer 
 	send, #m
 	send, #m
 	
@@ -940,9 +950,7 @@ id_pw_set(){
 			IniRead, id2_pw, machine_config.ini, machine%A_Index%, id2_pw	
 			IniRead, id2_job, machine_config.ini, machine%A_Index%, id2_job
 			IniRead, winbaram_path, machine_config.ini, machine%A_Index%, winbaram_path		
-			msg =  [+] MACHINE IP FOUND !
-			log(msg)
-			msg = [+] MACHINE CONFIG: %ip% %id1% %id1_pw% %id1_job% %id2% %id2_pw% %id2_job% %winbaram_path%
+			msg =  [+] MACHINE IP FOUND !`n[+] MACHINE CONFIG: %ip% %id1% %id1_pw% %id1_job% %id2% %id2_pw% %id2_job% %winbaram_path%
 			log(msg)
 			return True
 		}		
@@ -1007,11 +1015,11 @@ F1::
 		login_result := login(id1, id2)		
 		if (login_result = False) {
 			log("[-] LOGIN FAIL")
-			; goto restart
+			; gosub restart
 		}
 	}
 	;settimer, server_check_sub, OFF  
-	ExitApp
+	;ExitApp
 	
 	
 	
@@ -1041,7 +1049,7 @@ F2::
 	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
-		ExitApp
+		;ExitApp
 	}
 	else {
 		msg = [+] ID/PW SET SUCCESSED
@@ -1068,7 +1076,7 @@ F2::
 		login_result := login(id1, id2)		
 		if (login_result = False) {
 			log("[-] LOGIN FAIL")
-			; goto restart
+			; gosub restart
 		}
 		*/
 	}
@@ -1132,11 +1140,11 @@ F3::
 			log("[-] LOGIN FAIL")
 			;settimer, server_check_sub, OFF  
 			sleep, 60000 ; 10 minute
-			goto F3
+			gosub F3
 		}
 	}
 	;settimer, server_check_sub, OFF  
-	ExitApp
+	;;ExitApp
 	
 	
 F4::
@@ -1151,6 +1159,72 @@ F4::
 	log(msg)
 	ExitApp	
 
+F5::
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############# [F9 SETTIMER ON] ##############
+	log(msg)
+	msg = ########################################
+	log(msg)
+	;settimer, server_check_sub, 60000 ; 1 minute
+
+F6::
+	global server_flag = False
+	global no_response_flag = False
+	global playing  := playing + 1
+	
+	log_init()
+	ip := myip()
+	
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############## [F6 HIT TEST] ##############
+	log(msg)
+	msg = ########################################
+	log(msg)
+	
+	msg = [+] START FB MACRO [%playing% DONE] - %ip%
+	log(msg)
+	
+	msg = [+] ID / PW SETTING
+	log(msg)	
+	id_pw_set_result := id_pw_set()
+	if (id_pw_set_result != True) {
+		msg = [-] ID/PW SET FAILED
+		log(msg)
+		;ExitApp
+	}
+	else {
+		msg = [+] ID/PW SET SUCCESSED
+		log(msg)
+	}
+	
+	;clean_process()
+	msg = [+] CLEAN PROCESS COMPLETE
+	log(msg)			
+	
+	if (server_flag){
+		log("[+] SERVER DISCONNECTION... ")
+		server_flag = False ; equally global server_flag = false				
+		log("[+] SERVER FLAG RESET")				
+	}	
+	else {
+		log("[+] SERVER STATUS IS CLEAN") ;WINBARAM STATUS IS CLEAN
+		;job_loader()
+		log("[+] HIT START")
+		hit(id1,id2)
+		/*
+		login_result := login(id1, id2)		
+		if (login_result = False) {
+			log("[-] LOGIN FAIL")
+			; gosub restart
+		}
+		*/
+	}
 	
 F7:: 
 	log_init()
@@ -1173,7 +1247,7 @@ F9::
 	ip := myip()
 	msg = test
 	log(test)
-	ExitApp
+	;ExitApp
 	
 F8:: ; for settimer
 	msg = `n
