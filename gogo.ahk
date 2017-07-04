@@ -10,8 +10,7 @@ global id2_pw
 global id2_job
 global winbaram_path 
 
-log_files_count(Directory)
-{			
+log_files_count(Directory) {			
 	log_count = 0
 	Loop, %Directory%\*.txt
 	{
@@ -19,6 +18,7 @@ log_files_count(Directory)
 	}
 	return log_count
 }
+
 
 log_init() {
 	global log_dir
@@ -54,13 +54,22 @@ log_init() {
 	}
 }
 
+
 log(sentence) {
 	global log_dir
 	FileAppend, [%A_Mon%/%A_Mday% %A_Hour%:%A_Min%:%A_Sec%] %sentence%`n, %log_dir%
 }
 
+
+winactivate_with_server_chk(id) {	
+	winactivate_with_server_chk()
+	sleep, 1000
+	server_check_sub()
+}
+
+
 refresh(id){
-	WinActivate, %id%
+	winactivate_with_server_chk()
 	sleep, 500
 	
 	controlsend, ,{ESC}, %id%
@@ -81,7 +90,7 @@ refresh(id){
 
 
 set_login(id, pw){ ; id list: kara, kka, vm1, vm2 
-	WinActivate, %id%
+	winactivate_with_server_chk()
 	sleep,1500
 	
 	send, %id%
@@ -146,7 +155,8 @@ winbaram_execution(id, pw){
 				set_login(id, pw)
 				
 				WinSetTitle, 바람의 나라, , %id% 
-				WinActivate, %id%
+				sleep, 3000 ; wait for server disconnection(login lek == lolek)
+				winactivate_with_server_chk()
 				sleep, 500
 				winmove, %id%, , 0, 0
 				msg = [+] LOGIN SUCCESS - %id%
@@ -192,7 +202,7 @@ winbaram_execution(id, pw){
 
 
 semicolon_check(id){ ; with find_tree and find_training
-	WinActivate, %id%
+	winactivate_with_server_chk()
 	sleep, 200
 	refresh(id)
 	loop, 30{
@@ -211,7 +221,7 @@ semicolon_check(id){ ; with find_tree and find_training
 server_reconn_check(id){
 	msg = [+] SERVER RECONNECTION AND NO-RESPONSE CHECK - %id%
 	log(msg)
-	WinActivate, %id%	
+	winactivate_with_server_chk()	
 	sleep,1000
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, reconn.bmp
 	if (errorlevel = 0) {
@@ -249,6 +259,7 @@ server_reconn_check(id){
 	return False
 }
 
+
 server_check_sub() {
 	log("[+] SERVER CHECK SUB")
 	server_reconn_check_result1 := server_reconn_check(id1)
@@ -270,12 +281,10 @@ server_check_sub() {
 	return
 }
 
+
 hit(id1, id2){
-	WinActivate, %id1%
-	sleep,1000
-	refresh(id1)
-	WinActivate, %id2%
-	sleep,1000
+	winactivate_with_server_chk()
+	refresh(id1)	
 	refresh(id2)
 	; weather_off()
 	sleep, 2000
@@ -290,19 +299,16 @@ hit(id1, id2){
 		loop, 2500
 		{
 			controlsend, , {space}{space}{space}, %id1% ; need to test for effectiveness
-			; sleep, 1 ; enough
 			controlsend, , {space}{space}{space}, %id2% ; need to test for effectiveness
 			sleep, 1 ; enough
 		}
-		msg= 123s
-		log(msg)
 		server_check_sub()
 	}
 }
 
 
 move_training_map(id){
-	WinActivate, %id%
+	winactivate_with_server_chk()
 	sleep,1000
 	refresh(id)
 	if ( A_WDay = 1 || A_WDay = 7 ){ ; 1=sunday, 7=saturday
@@ -335,11 +341,10 @@ move_training_map(id){
 }
 
 
-find_tree_image(id)
-{
+find_tree_image(id) {
 	msg = [+] FIND TREE IMAGE START - %id%
 	log(msg)
-	WinActivate, %id%
+	winactivate_with_server_chk()
 	sleep,1000
 	;controlsend, , n, %id% ; name remove
 	find_tree_flag = 0
@@ -542,12 +547,11 @@ find_tree_image(id)
 }
 
 
-
 find_training_image(id){ ; up, down, left, right of character semicolon check
 	;mousemove, 0, 0 ; no interrupt to imagesearch
 	msg = [+] FIND TRAINING IMAGE START - %id%
 	log(msg)
-	WinActivate, %id%
+	winactivate_with_server_chk()
 	sleep,1000
 	
 	ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *20 training.bmp
@@ -625,8 +629,9 @@ find_training_image(id){ ; up, down, left, right of character semicolon check
 	}
 }
 
+
 find_moksuNPC(id){
-	WinActivate, %id%
+	winactivate_with_server_chk()
 	sleep,1000
 	;win activate %id%
 	ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, moksuNPC.bmp
@@ -643,8 +648,9 @@ find_moksuNPC(id){
 	return False
 }
 
+
 find_moksuNPC2(id){
-	WinActivate, %id%
+	winactivate_with_server_chk()
 	sleep,1000
 	
 	controlsend, , {TAB}{ENTER}, %id%
@@ -673,8 +679,9 @@ find_moksuNPC2(id){
 	return False
 }
 
+
 move_tree_map(id){
-	WinActivate, %id%
+	winactivate_with_server_chk()
 	sleep,1000
 	
 	refresh(id)
@@ -725,6 +732,7 @@ move_tree_map(id){
 	}
 	return False
 }
+
 
 clean_process(){
 	tooltip, clean_process, 0, 0
@@ -798,6 +806,7 @@ go_training_scenario(id) {
 	return False
 }
 
+
 go_tree_scenario(id) {
 	msg = [+] GO TREE SCENARIO START - %id%
 	log(msg)
@@ -832,6 +841,7 @@ go_tree_scenario(id) {
 	log(msg)
 	return False
 }
+
 
 job_starter(id, job) {
 	msg = [+] JOB START - %id%, %job%
@@ -875,8 +885,8 @@ job_starter(id, job) {
 	}
 }
 
-job_loader() 
-{
+
+job_loader() {
 	job_starter_id1_result := job_starter(id1, id1_job)
 	job_starter_id2_result := job_starter(id2, id2_job)
 	;msgbox % job_starter_id1_result
@@ -900,8 +910,7 @@ job_loader()
 }
 
 
-login(id1, id2)
-{
+login(id1, id2) {
 	log("[+] LOGIN  START")
 	MouseMove, 0, 0 ; for notice button. chang the image at on focus 
 	ToolTip, login-start, 0, 0	
@@ -923,16 +932,19 @@ login(id1, id2)
 	}
 }
 
-myip(){
+
+myip() {
 	;log("[+] GET MY IP")
 	ip = %A_IPAddress1%
 	return ip
 }
 
+
 CountSubstring(fullstring, substring){
    StringReplace, junk, fullstring, %substring%, , UseErrorLevel
    return errorlevel
 }
+
 
 id_pw_set(){ 
 	local_ip := myip()	
@@ -962,7 +974,23 @@ id_pw_set(){
 }
 
 
-F1:: 
+
+
+/*************************************************************
+**************************HOTKEY***************************
+*************************************************************/
+/* 
+F1 Just login for test
+F2 Just job for test
+F3 Login + job for macro
+F4 ;ExitApp
+F6 HIT STOP
+F7 HIT START
+F8 test
+*/
+
+
+F1:: {
 	global server_flag = False
 	global no_response_flag = False
 	global playing  := playing + 1
@@ -1020,10 +1048,10 @@ F1::
 	}
 	;settimer, server_check_sub, OFF  
 	;ExitApp
+}	
 	
 	
-	
-F2::
+F2:: {
 	global server_flag = False
 	global no_response_flag = False
 	global playing  := playing + 1
@@ -1081,8 +1109,10 @@ F2::
 		*/
 	}
 	;settimer, server_check_sub, OFF  
-	
-F3::
+}
+
+
+F3:: {
 	global server_flag = False
 	global no_response_flag = False
 	global playing  := playing + 1
@@ -1145,9 +1175,10 @@ F3::
 	}
 	;settimer, server_check_sub, OFF  
 	;;ExitApp
+}
 	
 	
-F4::
+F4:: {
 	msg = `n
 	log(msg)
 	msg = ########################################
@@ -1158,8 +1189,10 @@ F4::
 	msg = ########################################
 	log(msg)
 	ExitApp	
+}
 
-F5::
+
+F5:: {
 	msg = `n
 	log(msg)
 	msg = ########################################
@@ -1169,8 +1202,10 @@ F5::
 	msg = ########################################
 	log(msg)
 	;settimer, server_check_sub, 60000 ; 1 minute
+}
 
-F6::
+
+F6:: {
 	global server_flag = False
 	global no_response_flag = False
 	global playing  := playing + 1
@@ -1225,8 +1260,10 @@ F6::
 		}
 		*/
 	}
-	
-F7:: 
+}
+
+
+F7:: {
 	log_init()
 	ip := myip()
 	
@@ -1240,16 +1277,19 @@ F7::
 	log(msg)
 	Pause, OFF
 	msg = [+] MACRO RESUME(PAUSE OFF) FOR HITTING
-	
+}
 
-F9::
+
+F9:: {
 	log_init()
 	ip := myip()
 	msg = test
 	log(test)
 	;ExitApp
-	
-F8:: ; for settimer
+}
+
+
+F8:: { ; for settimer
 	msg = `n
 	log(msg)
 	msg = ########################################
@@ -1259,9 +1299,10 @@ F8:: ; for settimer
 	msg = ########################################
 	log(msg)
 	;settimer, server_check_sub, 60000 ; 1 minute
-	
+}
 
-F10:: 
+
+F10:: {
 	log_init()
 	ip := myip()
 	; global hitting = 1
@@ -1276,16 +1317,10 @@ F10::
 	log(msg)
 	Pause, ON
 	msg = [-] MACRO STOP(PAUSE ON) FOR HITTING
-/* 
-F1 Just login for test
-F2 Just job for test
-F3 Login + job for macro
-F4 ;ExitApp
-F6 HIT STOP
-F7 HIT START
-F8 test
-*/
-	
+}
+
+
+
 go_smithy(){ ; 대장간
 	;2 case. not needs. depracte
 	
@@ -1294,7 +1329,7 @@ go_smithy(){ ; 대장간
 set_option(){ ; deprecate
 	;옷벗기
 	; 귓거부등 
-		;날씨끄기 필수구나 
+	;날씨끄기 필수구나 
 	;이름안보이기#ClipboardTimeo
 	; 무기끼기#ClipboardTimeout
 }
@@ -1302,7 +1337,6 @@ set_option(){ ; deprecate
 go_coordinate(wx, wy){
 	;i go to for want coordinate
 }
-
 
 recognition_xy_coordinate(){
 	; deprecate 
