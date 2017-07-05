@@ -1,8 +1,16 @@
-	id_pw_set_result := True
-	if (id_pw_set_result != False) {
-		msg = [-] ID/PW SET FAILED
-		msgbox, , , %msg% ;log(msg)		
-	else {
-		msg = [+] ID/PW SET SUCCESSED
-		msgbox, , , %msg% ;log(msg)
-	}
+#WinActivateForce
+global server_down_count = 0
+
+test(){
+	global server_down_count := server_down_count + 1
+}
+
+f2::
+loop, 3
+{
+	msgbox, , , %server_down_count%
+	test()
+}
+msgbox, , , %server_down_count%
+f3::
+	ExitApp

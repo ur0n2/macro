@@ -1,6 +1,7 @@
 #Persistent
 ;settimer, server_check_sub, 30000
 global playing = 0
+global server_down_count = 0
 global ip
 global id1
 global id1_pw
@@ -292,11 +293,14 @@ server_check_sub() {
 		log(msg)
 		msgbox, , , server is down, 1
 		log("[-] SERVER IS DOWN... RESTART !")
-		
+		global server_down_count := server_down_count + 1
 		sleep, 15000 ; 15s server reboot time
 		log("[+] WAIT FOR SERVER REBOOTING...")
 		;settimer, server_check_sub, off
 		;log("[-] SETTIMER OFF")
+		if (server_down_count >=3) {
+			sleep, 600000 ; 10minutes
+		}
 		gosub, F3
 		
 	}
