@@ -36,6 +36,3 @@ if WinExist("Kingdom of the Winds") {
 	send, {ESC}
 	
 }
-
-
-

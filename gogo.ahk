@@ -251,6 +251,7 @@ server_reconn_check(id) {
 		return True
 	}
 	
+	/*
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, no_response.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10 
@@ -258,7 +259,40 @@ server_reconn_check(id) {
 		log(msg)		
 		return True
 	}
+	*/
 	
+	a := DllCall("IsHungAppWindow", "UInt", WinExist("Kingdom of the Winds"))
+	b := DllCall("IsHungAppWindow", "UInt", WinExist("winbaram"))
+	c := DllCall("IsHungAppWindow", "UInt", WinExist("바람의 나라"))
+	d := DllCall("IsHungAppWindow", "UInt", WinExist("카라"))
+	e := DllCall("IsHungAppWindow", "UInt", WinExist("끄아"))
+
+
+	if (a || b || c || d || e) {		
+		msg = IsHungAppChk %a%, %b%, %c%,  %d%, %e%
+		log(msg)
+		
+		WinActivate, Kingdom of the Winds
+		WinActivate, winbaram
+		WinActivate, 바람의 나라
+		WinActivate, 카라
+		WinActivate, 끄아
+
+		send, {ESC}
+		send, {ESC}	
+		send, {ESC}
+
+	}
+
+	if WinExist("Kingdom of the Winds") {	
+		msg = kingdom of the winds win title exist
+		log(msg)
+		send, {ESC}
+		send, {ESC}	
+		send, {ESC}		
+	}
+
+
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, nonmsgbox_already_storm.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10 
