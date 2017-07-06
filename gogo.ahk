@@ -260,38 +260,42 @@ server_reconn_check(id) {
 		return True
 	}
 	*/
-	
-	a := DllCall("IsHungAppWindow", "UInt", WinExist("Kingdom of the Winds"))
-	b := DllCall("IsHungAppWindow", "UInt", WinExist("winbaram"))
-	c := DllCall("IsHungAppWindow", "UInt", WinExist("바람의 나라"))
-	d := DllCall("IsHungAppWindow", "UInt", WinExist("카라"))
-	e := DllCall("IsHungAppWindow", "UInt", WinExist("끄아"))
+	loop, 1
+	{
+		a := DllCall("IsHungAppWindow", "UInt", WinExist("Kingdom of the Winds"))
+		b := DllCall("IsHungAppWindow", "UInt", WinExist("winbaram"))
+		c := DllCall("IsHungAppWindow", "UInt", WinExist("바람의 나라"))
+		d := DllCall("IsHungAppWindow", "UInt", WinExist("카라"))
+		e := DllCall("IsHungAppWindow", "UInt", WinExist("끄아"))
 
 
-	if (a || b || c || d || e) {		
-		msg = IsHungAppChk %a%, %b%, %c%,  %d%, %e%
-		log(msg)
+		if (a || b || c || d || e) {		
+			msg = IsHungAppChk %a%, %b%, %c%,  %d%, %e%
+			log(msg)
+			
+			WinActivate, Kingdom of the Winds
+			WinActivate, winbaram
+			WinActivate, 바람의 나라
+			WinActivate, 카라
+			WinActivate, 끄아
+
+			send, {ESC}
+			send, {ESC}	
+			send, {ESC}
+			return True
+		}
+
+		sleep, 5000
 		
-		WinActivate, Kingdom of the Winds
-		WinActivate, winbaram
-		WinActivate, 바람의 나라
-		WinActivate, 카라
-		WinActivate, 끄아
-
-		send, {ESC}
-		send, {ESC}	
-		send, {ESC}
-
+		if WinExist("Kingdom of the Winds") {	 ; no response window title
+			msg = kingdom of the winds win title exist
+			log(msg)
+			send, {ESC}
+			send, {ESC}	
+			send, {ESC}	
+			return True			
+		}	
 	}
-
-	if WinExist("Kingdom of the Winds") {	
-		msg = kingdom of the winds win title exist
-		log(msg)
-		send, {ESC}
-		send, {ESC}	
-		send, {ESC}		
-	}
-
 
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, nonmsgbox_already_storm.bmp
 	if (errorlevel = 0) {
@@ -313,6 +317,18 @@ server_reconn_check(id) {
 		mouseclick, left, fx+1, fy+1, 1
 		return False
 	}
+
+
+	If WinExist("후원 세션")		
+	{
+		WinActivate, "후원 세션 "
+		Send, {ENTER}
+		Send, {ESC}
+		Send, {ESC}
+		Send, {ESC}	
+		return True
+	}
+
 	return False
 }
 
@@ -332,8 +348,9 @@ server_check_sub() {
 		log("[+] WAIT FOR SERVER REBOOTING...")
 		;settimer, server_check_sub, off
 		;log("[-] SETTIMER OFF")
-		if (server_down_count >=3) {
+		if (server_down_count >=5) {
 			sleep, 600000 ; 10minutes
+			server_down_count := 0
 		}
 		gosub, F3
 		
