@@ -375,6 +375,9 @@ hit(id1, id2) {
 		log(msg)
 		loop, 2500
 		{
+			send, #m
+			WinMinimize, %id1%
+			WinMinimize, %id2%			
 			controlsend, , {space}{space}{space}, %id1% ; need to test for effectiveness
 			controlsend, , {space}{space}{space}, %id2% ; need to test for effectiveness
 			sleep, 1 ; enough
