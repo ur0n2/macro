@@ -10,6 +10,7 @@ global id2
 global id2_pw
 global id2_job
 global winbaram_path 
+global fx, fy
 
 log_files_count(Directory) {			
 	log_count = 0
@@ -62,33 +63,37 @@ log(sentence) {
 }
 
 
-winactivate_with_server_chk(id) {	
+winactivate_with_server_chk(id) {	; for stablize... but, too much slow... deprecated... 
 	WinActivate, %id%
 	sleep, 1000
 	server_check_sub()
 }
 
-
-image_search_try(fx, fy, startx, starty, endx, endy, imgfile) {	
+image_search_try(imgfile) {  ;(fx, fy, startx, starty, endx, endy, imgfile) {	
+	global fx, fy
 	; ex; ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp	
 	loop, 10 
 	{
-		ImageSearch, fx, fy, startx, starty, endx, endy, imgfile
-		if eerorlevel = 0 
+		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, %imgfile% ;startx, starty, endx, endy, imgfile
+		if errorlevel = 0 
 		{
-			msg = [+] IMAGE SERACH TRY SUCCESSED
+			msg = [+] IMAGE SERACH TRY SUCCESS - %fx% %fy% %imgfile%
+			log(msg)
 			break
 		}
 		sleep, 1000
 	}
-	msg = [-] IMAGE SERACH TRY FAILED
-	log(msg)
+	if errorlevel != 0 
+	{
+		msg = [-] IMAGE SERACH TRY FAILED - %imgfile%
+		log(msg)
+	}
 }
 
 
 
 refresh(id) {
-	winactivate_with_server_chk(id)
+	WinActivate, %id%
 	sleep, 500
 	
 	controlsend, ,{ESC}, %id%
@@ -109,7 +114,7 @@ refresh(id) {
 
 
 set_login(id, pw) { ; id list: kara, kka, vm1, vm2 
-	winactivate_with_server_chk(id)
+	WinActivate, %id%
 	sleep,1500
 	
 	send, %id%
@@ -143,7 +148,7 @@ winbaram_execution(id, pw) {
 	log(msg)
 	;ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp
 	;ImageSearch, fx, fy, 865, 649, 1142, 739, start.bmp
-	image_search_try(fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp) ; for test
+	image_search_try("start.bmp") ; (fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp) ; for test
 	
 	if errorlevel = 0
 	{
@@ -172,11 +177,11 @@ winbaram_execution(id, pw) {
 			if errorlevel = 0
 			{
 				ToolTip, login3-success, 0, 0
+				WinSetTitle, 바람의 나라, , %id% 
 				set_login(id, pw)
 				
-				WinSetTitle, 바람의 나라, , %id% 
 				sleep, 3000 ; wait for server disconnection(login lek == lolek)
-				winactivate_with_server_chk(id)
+				WinActivate, %id%
 				sleep, 500
 				winmove, %id%, , 0, 0
 				msg = [+] LOGIN SUCCESS - %id%
@@ -222,7 +227,7 @@ winbaram_execution(id, pw) {
 
 
 semicolon_check(id) { ; with find_tree and find_training
-	winactivate_with_server_chk(id)
+	WinActivate, %id%
 	sleep, 200
 	refresh(id)
 	loop, 30{
@@ -241,7 +246,8 @@ semicolon_check(id) { ; with find_tree and find_training
 server_reconn_check(id) {
 	msg = [+] SERVER RECONNECTION AND NO-RESPONSE CHECK - %id%
 	log(msg)
-	winactivate_with_server_chk(id)	
+	;WinActivate, %id% ; infinite loop	
+	WinActivate, %id%
 	sleep,1000
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, reconn.bmp
 	if (errorlevel = 0) {
@@ -360,7 +366,7 @@ server_check_sub() {
 
 
 hit(id1, id2) {
-	winactivate_with_server_chk(id)
+	WinActivate, %id%
 	refresh(id1)	
 	refresh(id2)
 	; weather_off()
@@ -388,7 +394,7 @@ hit(id1, id2) {
 
 
 move_training_map(id) {
-	winactivate_with_server_chk(id)
+	WinActivate, %id%
 	sleep,1000
 	refresh(id)
 	if ( A_WDay = 1 || A_WDay = 7 ) { ; 1=sunday, 7=saturday
@@ -424,7 +430,7 @@ move_training_map(id) {
 find_tree_image(id) {
 	msg = [+] FIND TREE IMAGE START - %id%
 	log(msg)
-	winactivate_with_server_chk(id)
+	WinActivate, %id%
 	sleep,1000
 	;controlsend, , n, %id% ; name remove
 	find_tree_flag = 0
@@ -631,7 +637,7 @@ find_training_image(id) { ; up, down, left, right of character semicolon check
 	;mousemove, 0, 0 ; no interrupt to imagesearch
 	msg = [+] FIND TRAINING IMAGE START - %id%
 	log(msg)
-	winactivate_with_server_chk(id)
+	WinActivate, %id%
 	sleep,1000
 	
 	ImageSearch, fx, fy, 0,0, A_ScreenWidth, A_ScreenHeight,  *20 training.bmp
@@ -711,7 +717,7 @@ find_training_image(id) { ; up, down, left, right of character semicolon check
 
 
 find_moksuNPC(id) {
-	winactivate_with_server_chk(id)
+	WinActivate, %id%
 	sleep,1000
 	
 	msg = [+] FIND MOKSU NPC START
@@ -733,7 +739,7 @@ find_moksuNPC(id) {
 
 
 find_moksuNPC2(id) {
-	winactivate_with_server_chk(id)
+	WinActivate, %id%
 	sleep,1000
 	
 	msg = [+] FIND MOKSU NPC2 START
@@ -767,7 +773,7 @@ find_moksuNPC2(id) {
 
 
 move_tree_map(id) {
-	winactivate_with_server_chk(id)
+	WinActivate, %id%
 	sleep,1000
 	
 	refresh(id)
