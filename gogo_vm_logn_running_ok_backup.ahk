@@ -1,7 +1,6 @@
 #Persistent
 ;settimer, server_check_sub, 30000
 global playing = 0
-global server_down_count = 0
 global ip
 global id1
 global id1_pw
@@ -10,9 +9,9 @@ global id2
 global id2_pw
 global id2_job
 global winbaram_path 
-global fx, fy
 
-log_files_count(Directory) {			
+log_files_count(Directory)
+{			
 	log_count = 0
 	Loop, %Directory%\*.txt
 	{
@@ -21,7 +20,6 @@ log_files_count(Directory) {
 	return log_count
 }
 
-
 log_init() {
 	global log_dir
 	FileCreateDir, log
@@ -29,7 +27,7 @@ log_init() {
 	log_count := log_files_count(log_dir_path)
 	
 	;msgbox, , , log file count: %log_count% , 1
-	if (log_count = 0) {		
+	if (log_count = 0){		
 		log_dir = %log_dir_path%\\log1.txt ;.\\log\\log{n}.txt
 		return 
 	}
@@ -56,44 +54,12 @@ log_init() {
 	}
 }
 
-
 log(sentence) {
 	global log_dir
 	FileAppend, [%A_Mon%/%A_Mday% %A_Hour%:%A_Min%:%A_Sec%] %sentence%`n, %log_dir%
 }
 
-
-winactivate_with_server_chk(id) {	; for stablize... but, too much slow... deprecated... 
-	WinActivate, %id%
-	sleep, 1000
-	server_check_sub()
-}
-
-image_search_try(imgfile) {  ;(fx, fy, startx, starty, endx, endy, imgfile) {	
-	global fx, fy
-	; ex; ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp	
-	loop, 10 
-	{
-		ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, %imgfile% ;startx, starty, endx, endy, imgfile
-		if errorlevel = 0 
-		{
-			msg = [+] IMAGE SERACH TRY SUCCESS - %fx% %fy% %imgfile%
-			log(msg)
-			return True ;break
-		}
-		sleep, 1000
-	}
-	if errorlevel != 0 
-	{
-		msg = [-] IMAGE SERACH TRY FAILED - %imgfile%
-		log(msg)
-		return False
-	}
-}
-
-
-
-refresh(id) {
+refresh(id){
 	WinActivate, %id%
 	sleep, 500
 	
@@ -108,13 +74,13 @@ refresh(id) {
 	sleep, 100
 	controlsend, ,{ctrl down}r, %id%
 	controlsend, ,{ctrl up}, %id%
-	sleep, 1500 ; refresh time 
+	sleep, 100
 	msg = [+] SCREEN REFRESH SUCCESS - %id% 
 	log(msg)
 }
 
 
-set_login(id, pw) { ; id list: kara, kka, vm1, vm2 
+set_login(id, pw){ ; id list: kara, kka, vm1, vm2 
 	WinActivate, %id%
 	sleep,1500
 	
@@ -130,7 +96,7 @@ set_login(id, pw) { ; id list: kara, kka, vm1, vm2
 }
 
 
-winbaram_execution(id, pw) {
+winbaram_execution(id, pw){
 	msg = [+] START WINBARAM.EXE - %id%
 	log(msg)
 	ToolTip, %id% gogo, 0, 0 
@@ -140,18 +106,16 @@ winbaram_execution(id, pw) {
 	Winwait, Notice
 	winmove, Notice, , A_ScreenWidth/2, 0  ; for imagesearch. because notice window is upper than any windows
 	sleep, 1000
-	if (ErrorLevel != 0) {
+	if (ErrorLevel != 0){
 		msg = [-] IMAGE-SEARCH ERROR FROM NOTICE - %id%
 		log(msg)
 		return False
 	}		
 	msg = [+] START LOGIN - %id%
 	log(msg)
-	;ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp
+	ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp
 	;ImageSearch, fx, fy, 865, 649, 1142, 739, start.bmp
-	;image_search_try("start.bmp") ; (
-	ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, start.bmp ; for test
-	
+
 	if errorlevel = 0
 	{
 		;mousemove, fx+25, fy+25
@@ -160,7 +124,6 @@ winbaram_execution(id, pw) {
 		sleep, 5000 ;3000
 		  
 		  
-		;image_search_try("login1.bmp") ;
 		ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, login1.bmp
 		if errorlevel = 0
 		{
@@ -170,22 +133,19 @@ winbaram_execution(id, pw) {
 		
 		mousemove, 10, 10 		
 		sleep, 2000
-		;image_search_try("login2.bmp") ;
 		ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, login2.bmp
 		if errorlevel = 0
 		{
 			ToolTip, login2-success, 0, 0
 			send, {a}
 			sleep, 2000
-			;image_search_try("login3.bmp") ;
 			ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, login3.bmp
 			if errorlevel = 0
 			{
 				ToolTip, login3-success, 0, 0
-				WinSetTitle, 바람의 나라, , %id% 
 				set_login(id, pw)
 				
-				sleep, 3000 ; wait for server disconnection(login lek == lolek)
+				WinSetTitle, 바람의 나라, , %id% 
 				WinActivate, %id%
 				sleep, 500
 				winmove, %id%, , 0, 0
@@ -231,7 +191,7 @@ winbaram_execution(id, pw) {
 }
 
 
-semicolon_check(id) { ; with find_tree and find_training
+semicolon_check(id){ ; with find_tree and find_training
 	WinActivate, %id%
 	sleep, 200
 	refresh(id)
@@ -248,13 +208,11 @@ semicolon_check(id) { ; with find_tree and find_training
 }
 
 
-server_reconn_check(id) {
+server_reconn_check(id){
 	msg = [+] SERVER RECONNECTION AND NO-RESPONSE CHECK - %id%
 	log(msg)
-	;WinActivate, %id% ; infinite loop	
-	WinActivate, %id%
+	WinActivate, %id%	
 	sleep,1000
-	;image_search_try("reconn.bmp") ;
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, reconn.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10 
@@ -263,7 +221,6 @@ server_reconn_check(id) {
 		return True
 	}
 	
-	/*
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, no_response.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10 
@@ -271,45 +228,7 @@ server_reconn_check(id) {
 		log(msg)		
 		return True
 	}
-	*/
-	loop, 1
-	{
-		a := DllCall("IsHungAppWindow", "UInt", WinExist("Kingdom of the Winds"))
-		b := DllCall("IsHungAppWindow", "UInt", WinExist("winbaram"))
-		c := DllCall("IsHungAppWindow", "UInt", WinExist("바람의 나라"))
-		d := DllCall("IsHungAppWindow", "UInt", WinExist("카라"))
-		e := DllCall("IsHungAppWindow", "UInt", WinExist("끄아"))
-
-
-		if (a || b || c || d || e) {		
-			msg = IsHungAppChk %a%, %b%, %c%,  %d%, %e%
-			log(msg)
-			
-			WinActivate, Kingdom of the Winds
-			WinActivate, winbaram
-			WinActivate, 바람의 나라
-			WinActivate, 카라
-			WinActivate, 끄아
-
-			send, {ESC}
-			send, {ESC}	
-			send, {ESC}
-			return True
-		}
-
-		sleep, 5000
-		
-		if WinExist("Kingdom of the Winds") {	 ; no response window title
-			msg = kingdom of the winds win title exist
-			log(msg)
-			send, {ESC}
-			send, {ESC}	
-			send, {ESC}	
-			return True			
-		}	
-	}
-
-	;image_search_try("nonmsgbox_already_storm.bmp") ;
+	
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, nonmsgbox_already_storm.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10 
@@ -318,10 +237,6 @@ server_reconn_check(id) {
 		return True
 	}
 	
-	/*
-	Teamviewer deprecated 
-	*/	
-	;image_search_try("teamV_sponsor_session_timeout.bmp") ;
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, teamV_sponsor_session_timeout.bmp
 	if (errorlevel = 0) {
 		tooltip, server_reconnection, 10, 10 
@@ -331,54 +246,36 @@ server_reconn_check(id) {
 		mouseclick, left, fx+1, fy+1, 1
 		return False
 	}
-
-
-	If WinExist("후원 세션")		
-	{
-		WinActivate, "후원 세션 "
-		Send, {ENTER}
-		Send, {ESC}
-		Send, {ESC}
-		Send, {ESC}	
-		WinActivate, %id%
-		msg = [+] Teamviewer Support Session Close
-		log(msg)
-		return True
-	}
-
 	return False
 }
-
 
 server_check_sub() {
 	log("[+] SERVER CHECK SUB")
 	server_reconn_check_result1 := server_reconn_check(id1)
 	server_reconn_check_result2 := server_reconn_check(id2)
-	if (server_reconn_check_result1 || server_reconn_check_rsesult2 ) {
+	if (server_reconn_check_result1 || server_reconn_check_rsesult2 ){
 		global server_flag = True
 		msg = [+] SERVER FLAG IN server check sub PROCEDURE: %server_flag%
 		log(msg)
 		msgbox, , , server is down, 1
 		log("[-] SERVER IS DOWN... RESTART !")
-		global server_down_count := server_down_count + 1
+		
 		sleep, 15000 ; 15s server reboot time
 		log("[+] WAIT FOR SERVER REBOOTING...")
 		;settimer, server_check_sub, off
 		;log("[-] SETTIMER OFF")
-		if (server_down_count >=5) {
-			sleep, 600000 ; 10minutes
-			server_down_count := 0
-		}
 		gosub, F3
 		
 	}
 	return
 }
 
-
-hit(id1, id2) {
-	WinActivate, %id%
-	refresh(id1)	
+hit(id1, id2){
+	WinActivate, %id1%
+	sleep,1000
+	refresh(id1)
+	WinActivate, %id2%
+	sleep,1000
 	refresh(id2)
 	; weather_off()
 	sleep, 2000
@@ -387,29 +284,28 @@ hit(id1, id2) {
 	;sleep, 5000
 	;settimer, server_check_sub, 50000 ; 10 minute
 	while True 
-	{
-		server_check_sub()
-		sleep, 1000
-		send, #m
-		;WinMinimize, %id1%
-		;WinMinimize, %id2%
+{
 		msg = [+] HITTING... !
 		log(msg)
 		loop, 2500
 		{
 			controlsend, , {space}{space}{space}, %id1% ; need to test for effectiveness
+			; sleep, 1 ; enough
 			controlsend, , {space}{space}{space}, %id2% ; need to test for effectiveness
 			sleep, 1 ; enough
 		}
+		msg= 123s
+		log(msg)
+		server_check_sub()
 	}
 }
 
 
-move_training_map(id) {
+move_training_map(id){
 	WinActivate, %id%
 	sleep,1000
 	refresh(id)
-	if ( A_WDay = 1 || A_WDay = 7 ) { ; 1=sunday, 7=saturday
+	if ( A_WDay = 1 || A_WDay = 7 ){ ; 1=sunday, 7=saturday
 		controlsend, , {ctrl down}e{ctrl up}, %id%
 		sleep, 500
 		controlsend, , {up}{up}{ENTER}, %id%
@@ -439,7 +335,8 @@ move_training_map(id) {
 }
 
 
-find_tree_image(id) {
+find_tree_image(id)
+{
 	msg = [+] FIND TREE IMAGE START - %id%
 	log(msg)
 	WinActivate, %id%
@@ -645,7 +542,8 @@ find_tree_image(id) {
 }
 
 
-find_training_image(id) { ; up, down, left, right of character semicolon check
+
+find_training_image(id){ ; up, down, left, right of character semicolon check
 	;mousemove, 0, 0 ; no interrupt to imagesearch
 	msg = [+] FIND TRAINING IMAGE START - %id%
 	log(msg)
@@ -727,14 +625,10 @@ find_training_image(id) { ; up, down, left, right of character semicolon check
 	}
 }
 
-
-find_moksuNPC(id) {
+find_moksuNPC(id){
 	WinActivate, %id%
 	sleep,1000
-	
-	msg = [+] FIND MOKSU NPC START
-	log(msg)
-	
+	;win activate %id%
 	ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, moksuNPC.bmp
 	if errorlevel = 0 
 	{
@@ -749,13 +643,9 @@ find_moksuNPC(id) {
 	return False
 }
 
-
-find_moksuNPC2(id) {
+find_moksuNPC2(id){
 	WinActivate, %id%
 	sleep,1000
-	
-	msg = [+] FIND MOKSU NPC2 START
-	log(msg)
 	
 	controlsend, , {TAB}{ENTER}, %id%
 	imagesearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, moksuNPCmsg.bmp
@@ -783,8 +673,7 @@ find_moksuNPC2(id) {
 	return False
 }
 
-
-move_tree_map(id) {
+move_tree_map(id){
 	WinActivate, %id%
 	sleep,1000
 	
@@ -797,7 +686,7 @@ move_tree_map(id) {
 		controlsend, , {ENTER}, %id%  
 		sleep, 500
 		find_moksuNPC_result := find_moksuNPC(id)
-		if (find_moksuNPC_result) {
+		if (find_moksuNPC_result){
 			sleep, 500
 			controlsend, , {DOWN}, %id%  
 			sleep, 500
@@ -814,7 +703,7 @@ move_tree_map(id) {
 		controlsend, , {ENTER}, %id%  
 		sleep, 500
 		find_moksuNPC_result := find_moksuNPC(id)
-		if (find_moksuNPC_result) {
+		if (find_moksuNPC_result){
 			sleep, 1000
 			controlsend, , {DOWN}, %id%  
 			sleep, 500
@@ -824,7 +713,7 @@ move_tree_map(id) {
 		}
 		else {
 			find_moksuNPC2_result := find_moksuNPC2(id)
-			if (find_moksuNPC_result) {
+			if (find_moksuNPC_result){
 				sleep, 1000
 				controlsend, , {DOWN}, %id%  
 				sleep, 500
@@ -837,8 +726,7 @@ move_tree_map(id) {
 	return False
 }
 
-
-clean_process() {
+clean_process(){
 	tooltip, clean_process, 0, 0
 	;sleep, 45000 ;
 	loop, 10{
@@ -860,7 +748,7 @@ clean_process() {
 }
 
 
-winbaram_execution_loader(id1, d2) { 
+winbaram_execution_loader(id1, d2){ 
 	log("[+] WINBARAM EXEUCTION LOADER START")
 	;msgbox, , %id1%
 	ToolTip, start-winbaram, 0, 0
@@ -888,7 +776,7 @@ go_training_scenario(id) {
 		log(msg)
 		if (move_training_map_status = True) {
 			find_training_image_status := find_training_image(id)
-			if (find_training_image_status ) {
+			if (find_training_image_status ){
 				msg = [+] FIND TRAINING IMAGE SUCCESS ! - %id%
 				log(msg)		
 				return True
@@ -910,7 +798,6 @@ go_training_scenario(id) {
 	return False
 }
 
-
 go_tree_scenario(id) {
 	msg = [+] GO TREE SCENARIO START - %id%
 	log(msg)
@@ -923,7 +810,7 @@ go_tree_scenario(id) {
 	
 		if (move_tree_map_status) {
 			find_tree_image_status := find_tree_image(id)
-			if (find_tree_image_status ) {
+			if (find_tree_image_status ){
 				msg = [+] FIND TREE IMAGE SUCCESS ! - %id%
 				log(msg)
 				return True
@@ -945,7 +832,6 @@ go_tree_scenario(id) {
 	log(msg)
 	return False
 }
-
 
 job_starter(id, job) {
 	msg = [+] JOB START - %id%, %job%
@@ -989,8 +875,8 @@ job_starter(id, job) {
 	}
 }
 
-
-job_loader() {
+job_loader() 
+{
 	job_starter_id1_result := job_starter(id1, id1_job)
 	job_starter_id2_result := job_starter(id2, id2_job)
 	;msgbox % job_starter_id1_result
@@ -998,7 +884,7 @@ job_loader() {
 	if ( job_starter_id1_result && job_starter_id2_result) {
 		log("[+] HIT START")
 		hit_result := hit(id1,id2)
-		if (hit_result = False) {
+		if (hit_result = False){
 			log("[-] HIT ERROR") ; do not raise this case
 			return False
 		}
@@ -1014,20 +900,21 @@ job_loader() {
 }
 
 
-login(id1, id2) {
+login(id1, id2)
+{
 	log("[+] LOGIN  START")
 	MouseMove, 0, 0 ; for notice button. chang the image at on focus 
 	ToolTip, login-start, 0, 0	
 	
 	winbaram_execution_loader_result := winbaram_execution_loader(id1, id2)
 	
-	if ( winbaram_execution_loader_result = False ) {
+	if ( winbaram_execution_loader_result = False ){
 		log("[-] WINBARAM EXEUCTION LOADER ERROR")
 		ToolTip, winbaram_execution_loader error, 0, 0
 		log("[-] LOGIN ERROR")
 		return False
 	}
-	else if ( winbaram_execution_loader_result = True ) {
+	else if ( winbaram_execution_loader_result = True ){
 		log("[+] WINBARAM EXECUTION LOADER SUCCESS")
 		ToolTip, winbaram_execution_loader success, 0, 0
 		log("[+] LOGIN PASS")
@@ -1036,21 +923,18 @@ login(id1, id2) {
 	}
 }
 
-
-myip() {
+myip(){
 	;log("[+] GET MY IP")
 	ip = %A_IPAddress1%
 	return ip
 }
 
-
-CountSubstring(fullstring, substring) {
+CountSubstring(fullstring, substring){
    StringReplace, junk, fullstring, %substring%, , UseErrorLevel
    return errorlevel
 }
 
-
-id_pw_set_from_ini() { 
+id_pw_set(){ 
 	local_ip := myip()	
 	IniRead, OutputVarSectionNames, machine_config.ini	
 	section_count := countSubstring(OutputVarSectionNames, "machine") 
@@ -1066,9 +950,7 @@ id_pw_set_from_ini() {
 			IniRead, id2_pw, machine_config.ini, machine%A_Index%, id2_pw	
 			IniRead, id2_job, machine_config.ini, machine%A_Index%, id2_job
 			IniRead, winbaram_path, machine_config.ini, machine%A_Index%, winbaram_path		
-			msg =  [+] MACHINE IP FOUND !
-			log(msg)
-			msg = [+] MACHINE CONFIG: %ip% %id1% %id1_pw% %id1_job% %id2% %id2_pw% %id2_job% %winbaram_path%
+			msg =  [+] MACHINE IP FOUND !`n[+] MACHINE CONFIG: %ip% %id1% %id1_pw% %id1_job% %id2% %id2_pw% %id2_job% %winbaram_path%
 			log(msg)
 			return True
 		}		
@@ -1080,26 +962,7 @@ id_pw_set_from_ini() {
 }
 
 
-
-
-/*
-**************************************************************
-**************************HOTKEY***************************
-**************************************************************
-
- F1 Just login for test
- F2 Just job for test
- F3 Login + job for macro
- F4 ;ExitApp
- F6 HIT TEST 
- F7 macro pause for hit job
- F8 macro resume for hit job
- F9 test
-*/
-
-
 F1:: 
-{
 	global server_flag = False
 	global no_response_flag = False
 	global playing  := playing + 1
@@ -1122,8 +985,8 @@ F1::
 	
 	msg = [+] ID / PW SETTING
 	log(msg)	
-	id_pw_set_from_ini_result := id_pw_set_from_ini()
-	if (id_pw_set_from_ini_result != True) {
+	id_pw_set_result := id_pw_set()
+	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
 		;;ExitApp
@@ -1142,7 +1005,7 @@ F1::
 	;settimer, server_check_sub, 90000 ; 90 second
 	;log("[+] SETTIMER ON")
 	
-	if (server_flag) {
+	if (server_flag){
 		log("[+] SERVER DISCONNECTION... ")
 		server_flag = False ; equally global server_flag = false				
 		log("[+] SERVER FLAG RESET")				
@@ -1157,11 +1020,10 @@ F1::
 	}
 	;settimer, server_check_sub, OFF  
 	;ExitApp
-}	
 	
 	
-F2:: 
-{
+	
+F2::
 	global server_flag = False
 	global no_response_flag = False
 	global playing  := playing + 1
@@ -1183,8 +1045,8 @@ F2::
 	
 	msg = [+] ID / PW SETTING
 	log(msg)	
-	id_pw_set_from_ini_result := id_pw_set_from_ini()
-	if (id_pw_set_from_ini_result != True) {
+	id_pw_set_result := id_pw_set()
+	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
 		;ExitApp
@@ -1202,7 +1064,7 @@ F2::
 	;settimer, server_check_sub, 40000 ; 10 minutes
 	;log("[+] SETTIMER ON")
 	
-	if (server_flag) {
+	if (server_flag){
 		log("[+] SERVER DISCONNECTION... ")
 		server_flag = False ; equally global server_flag = false				
 		log("[+] SERVER FLAG RESET")				
@@ -1219,11 +1081,8 @@ F2::
 		*/
 	}
 	;settimer, server_check_sub, OFF  
-}
-
-
+	
 F3::
-{
 	global server_flag = False
 	global no_response_flag = False
 	global playing  := playing + 1
@@ -1245,8 +1104,8 @@ F3::
 	
 	msg = [+] ID / PW SETTING
 	log(msg)	
-	id_pw_set_from_ini_result := id_pw_set_from_ini()
-	if (id_pw_set_from_ini_result != True) {
+	id_pw_set_result := id_pw_set()
+	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
 		;ExitApp
@@ -1266,7 +1125,7 @@ F3::
 	;settimer, server_check_sub, 30000 ; 10 minute
 	;log("[+] SETTIMER ON")
 	
-	if (server_flag) {
+	if (server_flag){
 		log("[+] SERVER DISCONNECTION... ")
 		server_flag = False ; equally global server_flag = false				
 		log("[+] SERVER FLAG RESET")				
@@ -1286,11 +1145,9 @@ F3::
 	}
 	;settimer, server_check_sub, OFF  
 	;;ExitApp
-}
 	
 	
 F4::
-{
 	msg = `n
 	log(msg)
 	msg = ########################################
@@ -1301,11 +1158,19 @@ F4::
 	msg = ########################################
 	log(msg)
 	ExitApp	
-}
 
+F5::
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############# [F9 SETTIMER ON] ##############
+	log(msg)
+	msg = ########################################
+	log(msg)
+	;settimer, server_check_sub, 60000 ; 1 minute
 
 F6::
-{
 	global server_flag = False
 	global no_response_flag = False
 	global playing  := playing + 1
@@ -1327,8 +1192,8 @@ F6::
 	
 	msg = [+] ID / PW SETTING
 	log(msg)	
-	id_pw_set_from_ini_result := id_pw_set_from_ini()
-	if (id_pw_set_from_ini_result != True) {
+	id_pw_set_result := id_pw_set()
+	if (id_pw_set_result != True) {
 		msg = [-] ID/PW SET FAILED
 		log(msg)
 		;ExitApp
@@ -1342,7 +1207,7 @@ F6::
 	msg = [+] CLEAN PROCESS COMPLETE
 	log(msg)			
 	
-	if (server_flag) {
+	if (server_flag){
 		log("[+] SERVER DISCONNECTION... ")
 		server_flag = False ; equally global server_flag = false				
 		log("[+] SERVER FLAG RESET")				
@@ -1360,11 +1225,43 @@ F6::
 		}
 		*/
 	}
-}
+	
+F7:: 
+	log_init()
+	ip := myip()
+	
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############# [F7 HIT RESUME] ##############
+	log(msg)
+	msg = ########################################
+	log(msg)
+	Pause, OFF
+	msg = [+] MACRO RESUME(PAUSE OFF) FOR HITTING
+	
 
+F9::
+	log_init()
+	ip := myip()
+	msg = test
+	log(test)
+	;ExitApp
+	
+F8:: ; for settimer
+	msg = `n
+	log(msg)
+	msg = ########################################
+	log(msg)
+	msg = ############# [F9 SETTIMER ON] ##############
+	log(msg)
+	msg = ########################################
+	log(msg)
+	;settimer, server_check_sub, 60000 ; 1 minute
+	
 
-F7::
-{
+F10:: 
 	log_init()
 	ip := myip()
 	; global hitting = 1
@@ -1379,58 +1276,35 @@ F7::
 	log(msg)
 	Pause, ON
 	msg = [-] MACRO STOP(PAUSE ON) FOR HITTING
-}
-
-
-F8::
-{
-	log_init()
-	ip := myip()
+/* 
+F1 Just login for test
+F2 Just job for test
+F3 Login + job for macro
+F4 ;ExitApp
+F6 HIT STOP
+F7 HIT START
+F8 test
+*/
 	
-	msg = `n
-	log(msg)
-	msg = ########################################
-	log(msg)
-	msg = ############# [F7 HIT RESUME] ##############
-	log(msg)
-	msg = ########################################
-	log(msg)
-	Pause, OFF
-	msg = [+] MACRO RESUME(PAUSE OFF) FOR HITTING
-}
-
-
-F9::
-{
-	log_init()
-	ip := myip()
-	msg = test
-	log(test)
-	;ExitApp
-}
-
-
-
-
-
-go_smithy() { ; 대장간
+go_smithy(){ ; 대장간
 	;2 case. not needs. depracte
 	
 }
 
-set_option() { ; deprecate
+set_option(){ ; deprecate
 	;옷벗기
 	; 귓거부등 
-	;날씨끄기 필수구나 
+		;날씨끄기 필수구나 
 	;이름안보이기#ClipboardTimeo
 	; 무기끼기#ClipboardTimeout
 }
 
-go_coordinate(wx, wy) {
+go_coordinate(wx, wy){
 	;i go to for want coordinate
 }
 
-recognition_xy_coordinate() {
+
+recognition_xy_coordinate(){
 	; deprecate 
 	; 최악의 경우 맵별로 좌표 따서 ... 이건 
 	; 근데 이게 확실킨 하다#ClipboardT
