@@ -344,7 +344,7 @@ server_reconn_check(id) {
 		WinActivate, %id%
 		msg = [+] Teamviewer Support Session Close
 		log(msg)
-		return True
+		return False
 	}
 	
 	
@@ -357,7 +357,7 @@ server_reconn_check(id) {
 		Send, {ESC}	
 		msg = [+] Teamviewer Session TimeOut Close
 		log(msg)
-		return True
+		return False
 	}
 	return False
 }
@@ -886,6 +886,7 @@ winbaram_execution_loader(id1, d2) {
 	winbaram_execution_result2 := winbaram_execution(id2, id2_pw)
 	WinWait, %id2%, , 60
 	
+	server_check_sub()
 	winbaram_execution_result := winbaram_execution_result1 && winbaram_execution_result2 ; AND Operation
 	return winbaram_execution_result
 }
