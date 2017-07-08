@@ -335,7 +335,8 @@ server_reconn_check(id) {
 
 	If WinExist("饶盔 技记")		
 	{
-		WinActivate, "饶盔 技记 "
+		WinActivate, 饶盔 技记
+		
 		Send, {ENTER}
 		Send, {ESC}
 		Send, {ESC}
@@ -345,7 +346,19 @@ server_reconn_check(id) {
 		log(msg)
 		return True
 	}
-
+	
+	
+	if WinExist("技记 矫埃")
+	{
+		WinActivate, 技记 矫埃 
+		send, {ENTER}
+		Send, {ESC}
+		Send, {ESC}
+		Send, {ESC}	
+		msg = [+] Teamviewer Session TimeOut Close
+		log(msg)
+		return True
+	}
 	return False
 }
 
