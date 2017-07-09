@@ -272,6 +272,7 @@ server_reconn_check(id) {
 		return True
 	}
 	*/
+	/*
 	loop, 1
 	{
 		a := DllCall("IsHungAppWindow", "UInt", WinExist("Kingdom of the Winds"))
@@ -308,6 +309,25 @@ server_reconn_check(id) {
 			return True			
 		}	
 	}
+	*/
+	;No response PoC
+
+
+	if  winexist("Kingdom of")  { ; Test Pass
+		WinActivate, Kingdom of
+		send, {ESC}
+		msg = [-] Kingdom of the Winds NO-RESPONSE
+		log(msg)
+		return True
+	}
+	
+	if winexist("AutoHotkey Unicode") { ; test  not yet
+		WinActivate, AutoHotkey Unicode
+		send, {ESC}
+		msg = [-] Autohotkey Unicode NO-RESPONSE
+		log(msg)
+		return True
+	}
 
 	;image_search_try("nonmsgbox_already_storm.bmp") ;
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, nonmsgbox_already_storm.bmp
@@ -320,7 +340,6 @@ server_reconn_check(id) {
 	
 	/*
 	Teamviewer deprecated 
-	*/	
 	;image_search_try("teamV_sponsor_session_timeout.bmp") ;
 	ImageSearch, fx, fy, 0,0 , A_ScreenWidth, A_ScreenHeight, teamV_sponsor_session_timeout.bmp
 	if (errorlevel = 0) {
@@ -332,6 +351,7 @@ server_reconn_check(id) {
 		return False
 	}
 
+	*/	
 
 	If WinExist("후원 세션")		
 	{
