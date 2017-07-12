@@ -399,7 +399,8 @@ server_check_sub() {
 		;settimer, server_check_sub, off
 		;log("[-] SETTIMER OFF")
 		if (server_down_count >=5) {
-			sleep, 600000 ; 10minutes
+			Random, rnd, 300000 , 600000 ; 5~10minutes random delay
+			;sleep, 300000 ; 10minutes
 			server_down_count := 0
 		}
 		gosub, F3
