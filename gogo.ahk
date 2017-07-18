@@ -383,10 +383,54 @@ server_reconn_check(id) {
 }
 
 
+event_time_chk() {
+	FormatTime, now_time , , HHmm ;HH:mm:ss
+	;msgbox , , , %now_time%
+	if (now_time >= 1050 && now_time <=1105)  
+	{
+		FormatTime, now_time,, HHmm ;HH:mm:ss
+		while (now_time >= 1100 && now_time <=1105) 
+		{		
+			FormatTime, now_time,, HHmm ;HH:mm:ss			
+			server_reconn_check_result1 := server_reconn_check(id1)
+			server_reconn_check_result2 := server_reconn_check(id2)
+			
+			if (server_reconn_check_result1 || server_reconn_check_rsesult2 ) {
+				; login hotkey & CALL event 
+			}
+			
+			; move zumak
+			if not booyeosung {
+				; send esc for event msgbox
+				ControlSend, {ESC}{ESC}{ESC}{ESC}{ESC}, %id1%
+				ControlSend, {ESC}{ESC}{ESC}{ESC}{ESC}, %id2%
+				
+				; move samsin 
+				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, hp_zero.bmp
+				if errorlevel = 0 { ; if hp is zero
+					; meet the samsin
+				}
+				
+				; move north 
+				controlsend, {SHIFT DOWN}l, %id1%
+				sleep, 500
+				controlsend, 4{ENTER}, %id1%
+				
+				controlsend, {SHIFT DOWN}l, %id2%
+				sleep, 500
+				controlsend, 4{ENTER}, %id2%
+			}
+			; else is booyeosung, joying event time ! 
+			
+			
+	}
+}
+
 server_check_sub() {
 	log("[+] SERVER CHECK SUB")
 	server_reconn_check_result1 := server_reconn_check(id1)
 	server_reconn_check_result2 := server_reconn_check(id2)
+		
 	if (server_reconn_check_result1 || server_reconn_check_rsesult2 ) {
 		global server_flag = True
 		msg = [+] SERVER FLAG IN server check sub PROCEDURE: %server_flag%
@@ -406,6 +450,8 @@ server_check_sub() {
 		gosub, F3
 		
 	}
+	event_time _chk()
+
 	return
 }
 
@@ -429,7 +475,7 @@ hit(id1, id2) {
 		;WinMinimize, %id2%
 		msg = [+] HITTING... !
 		log(msg)
-		loop, 2500
+		loop, 5000 ;2500
 		{
 			controlsend, , {space}{space}{space}, %id1% ; need to test for effectiveness
 			controlsend, , {space}{space}{space}, %id2% ; need to test for effectiveness
