@@ -2,6 +2,7 @@
 ;settimer, server_check_sub, 30000
 global playing = 0
 global server_down_count = 0
+global fail_count = 0
 global ip
 global id1
 global id1_pw
@@ -384,6 +385,7 @@ server_reconn_check(id) {
 
 
 event_time_chk() {
+	
 	FormatTime, now_time , , HHmm ;HH:mm:ss
 	;msgbox , , , %now_time%
 	if (now_time >= 1050 && now_time <=1105)  
@@ -450,7 +452,7 @@ server_check_sub() {
 		gosub, F3
 		
 	}
-	event_time _chk()
+	; event_time _chk()
 
 	return
 }
@@ -1089,6 +1091,7 @@ job_loader() {
 		msg = [-] JOB LOADER FAIL
 		log(msg)
 		sleep, 60000
+		global fail_count := fail_count + 1
 		gosub, F3
 		return False
 	}
@@ -1308,6 +1311,20 @@ F3::
 	global server_flag = False
 	global no_response_flag = False
 	global playing  := playing + 1
+	
+	
+	if fail_count > 5 
+	{
+		msg = [-] FAIL COUNT IS 5, SLEEP 30 minutes
+		log(msg)
+		sleep, 1800000 ; 30minutes
+	}	
+	else if fail_count = 10 
+	{
+		msg = [-] FAIL COUNT IS 10. EXIT APP!!
+		log(msg)
+		ExitApp
+	}
 	
 	log_init()
 	ip := myip()
