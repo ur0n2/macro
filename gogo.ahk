@@ -385,7 +385,6 @@ server_reconn_check(id) {
 
 
 event_time_chk() {
-	
 	FormatTime, now_time , , HHmm ;HH:mm:ss
 	;msgbox , , , %now_time%
 	if (now_time >= 1050 && now_time <=1105)  
@@ -398,19 +397,21 @@ event_time_chk() {
 			server_reconn_check_result2 := server_reconn_check(id2)
 			
 			if (server_reconn_check_result1 || server_reconn_check_rsesult2 ) {
-				; login hotkey & CALL event 
+				msgbox, , 1,1,1  ; login hotkey & CALL event 
 			}
 			
 			; move zumak
-			if not booyeosung {
+			if not booyeosung 
+			{
 				; send esc for event msgbox
 				ControlSend, {ESC}{ESC}{ESC}{ESC}{ESC}, %id1%
 				ControlSend, {ESC}{ESC}{ESC}{ESC}{ESC}, %id2%
 				
 				; move samsin 
 				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, hp_zero.bmp
-				if errorlevel = 0 { ; if hp is zero
-					; meet the samsin
+				if errorlevel = 0 
+				{ ; if hp is zero
+					msgbox, , 1,1,1 ; meet the samsin
 				}
 				
 				; move north 
@@ -425,6 +426,7 @@ event_time_chk() {
 			; else is booyeosung, joying event time ! 
 			
 			
+		}
 	}
 }
 
@@ -1313,13 +1315,13 @@ F3::
 	global playing  := playing + 1
 	
 	
-	if fail_count > 5 
+	if (fail_count = 5)
 	{
 		msg = [-] FAIL COUNT IS 5, SLEEP 30 minutes
 		log(msg)
 		sleep, 1800000 ; 30minutes
 	}	
-	else if fail_count = 10 
+	else if (fail_count = 10)
 	{
 		msg = [-] FAIL COUNT IS 10. EXIT APP!!
 		log(msg)
