@@ -131,6 +131,28 @@ set_login(id, pw) { ; id list: kara, kka, vm1, vm2
 }
 
 
+already_chk() {
+	msg = [+] ALREADY CONNECTION CHECK 
+	log(msg)
+	
+	ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, already.bmp 
+	if errorlevel = 0
+	{
+		msg = [+] ALREADY CONNECTED, TIME SLEEP 2700 SECONDS START 
+		log(msg)
+		
+		sleep, 3000
+		send, {enter}
+		sleep, 2700000 ; 30minutes delay
+		
+		msg = [+] ALREADY CONNECTED, TIME SLEEP 2700 SECONDS END, RE-LOGIN
+		log(msg)
+		
+		send, {enter}		
+	}
+}
+
+
 winbaram_execution(id, pw) {
 	msg = [+] START WINBARAM.EXE - %id%
 	log(msg)
@@ -185,7 +207,7 @@ winbaram_execution(id, pw) {
 				ToolTip, login3-success, 0, 0
 				WinSetTitle, 바람의 나라, , %id% 
 				set_login(id, pw)
-				
+				already_chk()
 				sleep, 3000 ; wait for server disconnection(login lek == lolek)
 				WinActivate, %id%
 				sleep, 500
@@ -387,46 +409,24 @@ server_reconn_check(id) {
 event_time_chk() {
 	FormatTime, now_time , , HHmm ;HH:mm:ss
 	;msgbox , , , %now_time%
-	if (now_time >= 1050 && now_time <=1105)  
-	{
-		FormatTime, now_time,, HHmm ;HH:mm:ss
-		while (now_time >= 1100 && now_time <=1105) 
-		{		
-			FormatTime, now_time,, HHmm ;HH:mm:ss			
-			server_reconn_check_result1 := server_reconn_check(id1)
-			server_reconn_check_result2 := server_reconn_check(id2)
-			
-			if (server_reconn_check_result1 || server_reconn_check_rsesult2 ) {
-				msgbox, , 1,1,1  ; login hotkey & CALL event 
-			}
-			
-			; move zumak
-			if not booyeosung 
-			{
-				; send esc for event msgbox
-				ControlSend, {ESC}{ESC}{ESC}{ESC}{ESC}, %id1%
-				ControlSend, {ESC}{ESC}{ESC}{ESC}{ESC}, %id2%
-				
-				; move samsin 
-				ImageSearch, fx, fy, 0, 0, A_ScreenWidth, A_ScreenHeight, hp_zero.bmp
-				if errorlevel = 0 
-				{ ; if hp is zero
-					msgbox, , 1,1,1 ; meet the samsin
-				}
-				
-				; move north 
-				controlsend, {SHIFT DOWN}l, %id1%
-				sleep, 500
-				controlsend, 4{ENTER}, %id1%
-				
-				controlsend, {SHIFT DOWN}l, %id2%
-				sleep, 500
-				controlsend, 4{ENTER}, %id2%
-			}
-			; else is booyeosung, joying event time ! 
-			
-			
-		}
+	if(now_time >= 2235 && now_time <=2300)  
+	{	
+		msg = [+] EVENT TIME IS NOW ! 
+		log(msg)
+		
+		clean_process()
+		msg = [+] CLEAN PROCESS COMPLETE
+		log(msg)			
+		
+		msg = [+] TIME SLEEP 2500 SECONDS START
+		log(msg)
+		sleep, 2500000 ; 41minutes
+		
+		
+		msg = [+] TIME SLEEP 2500 SECONDS END, GOSUB F3
+		log(msg)
+		
+		gosub, F3
 	}
 }
 
@@ -434,7 +434,7 @@ server_check_sub() {
 	log("[+] SERVER CHECK SUB")
 	server_reconn_check_result1 := server_reconn_check(id1)
 	server_reconn_check_result2 := server_reconn_check(id2)
-		
+	event_time_chk()
 	if (server_reconn_check_result1 || server_reconn_check_rsesult2 ) {
 		global server_flag = True
 		msg = [+] SERVER FLAG IN server check sub PROCEDURE: %server_flag%
@@ -451,6 +451,7 @@ server_check_sub() {
 			;sleep, 300000 ; 10minutes
 			server_down_count := 0
 		}
+		
 		gosub, F3
 		
 	}
