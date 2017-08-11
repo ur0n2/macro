@@ -135,6 +135,7 @@ already_chk() {
 	msg = [+] ALREADY CONNECTION CHECK 
 	log(msg)
 	
+	slep, 2000
 	ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, already.bmp 
 	if errorlevel = 0
 	{
@@ -143,7 +144,7 @@ already_chk() {
 		
 		sleep, 3000
 		send, {enter}
-		sleep, 2700000 ; 30minutes delay
+		sleep, 2700000 ; 45 minutes delay
 		
 		msg = [+] ALREADY CONNECTED, TIME SLEEP 2700 SECONDS END, RE-LOGIN
 		log(msg)
@@ -152,6 +153,37 @@ already_chk() {
 	}
 }
 
+
+meet_the_angel_of_death(id) { ;revival
+	msg = [+] MEET THE ANGEL OF DEATH - %id%
+	log(msg)
+	
+	; magic invocation  -> shift z z 
+	; npc click
+	; msgbox 
+	; return
+	
+
+}
+
+
+hp_zero_chk(id) {
+	msg = [+] HP ZERO CHECK - %id%
+	log(msg)
+	
+	WinActivate, %id%	
+	ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, hp_zero.bmp 
+	if errorlevel = 0
+	{
+		msg = [+] HP ZERO DETECTED ! - %id% IS DEAD
+		log(msg)
+		
+		meet_the_angel_of_death_result := meet_the_angel_of_death(id)
+		return True
+	}
+	return False
+}
+	
 
 winbaram_execution(id, pw) {
 	msg = [+] START WINBARAM.EXE - %id%
@@ -402,6 +434,9 @@ server_reconn_check(id) {
 		log(msg)
 		return False
 	}
+	
+	hp_zero_chk_result := hp_zero_chk(id)
+	
 	return False
 }
 
