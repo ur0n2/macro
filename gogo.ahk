@@ -135,7 +135,7 @@ already_chk() {
 	msg = [+] ALREADY CONNECTION CHECK 
 	log(msg)
 	
-	slep, 2000
+	sleep, 2000
 	ImageSearch, fx,fy, 0,0 ,A_ScreenWidth, A_ScreenHeight, already.bmp 
 	if errorlevel = 0
 	{
