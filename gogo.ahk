@@ -444,7 +444,7 @@ server_reconn_check(id) {
 event_time_chk() {
 	FormatTime, now_time , , HHmm ;HH:mm:ss
 	;msgbox , , , %now_time%
-	if(now_time >= 2235 && now_time <=2300)  
+	if(now_time >= 2245 && now_time <=2303)  
 	{	
 		msg = [+] EVENT TIME IS NOW ! 
 		log(msg)
