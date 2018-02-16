@@ -912,7 +912,7 @@ move_tree_map(id) {
 	if ( A_WDay = 1 || A_WDay = 7 ) { ; 주말
 		controlsend, , uu, %id% 
 		sleep, 500
-		controlsend, , {DOWN}{DOWN}{DOWN}{DOWN}, %id%  
+		controlsend, , {DOWN}{DOWN}{DOWN}, %id%  
 		sleep, 500
 		controlsend, , {ENTER}, %id%  
 		sleep, 500
@@ -929,7 +929,7 @@ move_tree_map(id) {
 	else{ ; 평일
 		controlsend, , uu, %id% 
 		sleep, 500
-		controlsend, , {DOWN}{DOWN}{DOWN}{DOWN}, %id%  
+		controlsend, , {DOWN}{DOWN}{DOWN}, %id%  
 		sleep, 500
 		controlsend, , {ENTER}, %id%  
 		sleep, 500
@@ -1357,9 +1357,9 @@ F3::
 		log(msg)
 		sleep, 1800000 ; 30minutes
 	}	
-	else if (fail_count = 500)
+	else if (fail_count = 10)
 	{
-		msg = [-] FAIL COUNT IS 500. EXIT APP!!
+		msg = [-] FAIL COUNT IS 10. EXIT APP!!
 		log(msg)
 		ExitApp
 	}
@@ -1411,7 +1411,8 @@ F3::
 		log("[+] SERVER STATUS IS CLEAN") ;WINBARAM STATUS IS CLEAN
 		login_result := login(id1, id2)		
 		if (login_result = True) {
-			job_loader()
+			sleep, 15000 ;job_loader()
+			server_check_sub()
 		}
 		else if (login_result = False) {
 			log("[-] LOGIN FAIL")

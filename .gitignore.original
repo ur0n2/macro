@@ -1,0 +1,4 @@
+*.exe
+*.bak
+log/
+machine_config.ini

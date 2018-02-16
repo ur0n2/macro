@@ -1,15 +1,15 @@
 [machine1]
-ip=192.168.57.5
+ip=203.250.148.136
 id1=카라
-id1_pw=123123
-id1_job=training
+id1_pw=zkfk1234
+id1_job=tree
 id2=끄아
 id2_pw=123123
 id2_job=tree
 winbaram_path= C:\Users\ur0n2\Desktop\123.lnk
 
 [machine2]
-ip=203.250.148.136
+ip=111
 id1=손나은
 id1_pw=apfhd
 id1_job=tree
